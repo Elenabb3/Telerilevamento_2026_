@@ -1,2 +1,3 @@
 # Telerilevamento_2026_
-Code developed during university course
+Codice del corso di telerilevamento geo-ecologico in R [sito del corso](https://www.unibo.it/it/studiare/insegnamenti-competenze-trasversali-moocs/insegnamenti/insegnamento/2025/535513)
+
