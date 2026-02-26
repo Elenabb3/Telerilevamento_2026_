@@ -16,3 +16,5 @@ library(terra) #richiama il pacchetto che ho già installato in precedenza
 install.packages("devtools")
 library(devtools)
 install_github("ducciorocchini/imageRy")
+library(imageRy) #mi da errore, risolvere con chatgpt
+im.list() #restituisce la lista di immagini
