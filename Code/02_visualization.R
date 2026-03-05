@@ -51,3 +51,73 @@ plot(b2, col=inferno(100))
 plot(b2, col=cl)
 
 
+####recuperare cose in mezze fatte nell'ora di lezione saltata #####
+
+cl = colorRampPalette(c("royalblue3", "seagreen1", "red1"))(100)
+plot(b2, col=cl)
+
+# bands
+b3 = im.import("sentinel.dolomites.b3.tif")
+b4 = im.import("sentinel.dolomites.b4.tif")
+b8 = im.import("sentinel.dolomites.b8.tif")
+
+par(mfrow=c(1,4))
+plot(b2)
+plot(b3)
+plot(b4)
+plot(b8)
+
+dev.off()
+
+im.multiframe(1,4)
+plot(b2)
+plot(b3)
+plot(b4)
+plot(b8)
+
+# Exercise: plot the bands using im.multiframe() one on top of the other
+im.multiframe(4,1)
+plot(b2)
+plot(b3)
+plot(b4)
+plot(b8)
+
+im.multiframe(2,2)
+plot(b2)
+plot(b3)
+plot(b4)
+plot(b8)
+
+cl = colorRampPalette(c("black", "light grey"))(100)
+plot(b2, col=cl)
+plot(b3, col=cl)
+plot(b4, col=cl)
+plot(b8, col=cl)
+
+cl = colorRampPalette(c("black", "light grey"))(2)
+plot(b2, col=cl)
+plot(b3, col=cl)
+plot(b4, col=cl)
+plot(b8, col=cl)
+
+
+
+####fine parte copiata da recuperare
+
+sentinel <- c(b2, b3, b4, b8)
+plot(sentinel)
+plot(sentinel, col=inferno(100))
+
+plot(sentinel$sentinel.dolomites.b8) #richiamo il layer con $, però in realtà è più comodo usare i subset come sotto, se le bande non sono tante
+dev.off() #per togliere il multiframe?
+
+#layer1=b2, layer2=b3, layer3=b4, layer4=b8
+plot(sentinel[[4]]) #seleziona solo una delle bande dello stack. Ho fatto un subset
+plot(sentinel[[2]])
+
+
+
+
+
+
+
