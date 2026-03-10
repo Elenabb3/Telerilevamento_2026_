@@ -170,6 +170,15 @@ im.plotRGB(sentinel, r=4, g=2, b=3)
 pairs(sentinel)
 #c'è anche ggpairs, che però va usato sui dataframe, forse ce lo farà più avanti
 
+#posso anche scrivere
+im.plotRGB(sentinel, 4, 2, 3) #basta che tengo l'ordine delle bande
+
+
+#funzione di terra fa cui deriva quella di imageRy, c'è bisogno di fare lo stretch lineare per le immagini che hanno valori in una parte ristretta
+#usando im.plotRGB lo fa già in automatico
+plotRGB(sentinel, 4, 2, 3, stretch="lin")
+plotRGB(sentinel, 4, 2, 3, stretch="hist") #altro modo, che fa lo stretch aumentando il contrasto sui valori medi
+
 
 
 
