@@ -5,6 +5,10 @@ install.packages("viridis")
 library(viridis)
 library(terra)
 library(imageRy)
+library(ggplot2)
+
+install.packages("patchwork")
+library(patchwork)
 
 
 #le funzioni di imageRy iniziano tutte per im.
@@ -121,6 +125,50 @@ dev.off() #per togliere il multiframe?
 #layer1=b2, layer2=b3, layer3=b4, layer4=b8
 plot(sentinel[[4]]) #seleziona solo una delle bande dello stack. Ho fatto un subset
 plot(sentinel[[2]])
+
+
+##lezione 10/03
+##GGPLOT
+#reimporto banda b2, b3, b4 e b8 se non l'ho già fatto
+p1 <- im.ggplot(b8)
+p2 <- im.ggplot(b4)
+
+p1 + p2 #avendo installato patchwork, io posso plottare semplicemente facendo così. Con il + dico di mettere i due plot uno accanto all'altro
+#quindi è un ulteriore metodo per fare i multiframe (oltre a par, im.multiframe e facendo gli stack)
+
+#FARE PLOT CON 3 BANDE RGB
+
+sentinel <- c(b2, b3, b4, b8) #rifaccio lo stack
+#1=b2 blue 2=b3 green 3=b4 red 4=b8 vicino infrarosso. Dovrei capire se richiamo l'oggetto a quale corrisponde quale colore in base all'ordine in cui sono?
+im.plotRGB(sentinel, r=3, g=2, b=1)
+#dato che ho segnato le 3 bande del visibile, mi restituisce l'immagine a colori naturali
+
+#metto il vicino infrarosso tra le bande. Scalo le bande di uno
+im.plotRGB(sentinel, r=4, g=3, b=2)
+#l'immagine diventa rossa dove c'è vegetazione, perché le foglie riflettono molto nel vicino infrarosso
+#vedo più chiaramente dove c'è vegetazione e dove no, cosa che nell'immagine reale non era così visibile perché si confondeva con ombre o altre parti scure
+
+#posso cambiare la posizione dell'infrarosso, in modo che venga di un altro colore. Qui ad esempio sul verde
+im.plotRGB(sentinel, r=3, g=4, b=2)
+
+im.plotRGB(sentinel, r=3, g=2, b=4) #idem col blu
+
+#plot the four manners of RGB in a single multiframe
+im.multiframe(2,2))
+im.plotRGB(sentinel, r=3, g=2, b=1)
+im.plotRGB(sentinel, r=4, g=3, b=2)
+im.plotRGB(sentinel, r=3, g=4, b=2)
+im.plotRGB(sentinel, r=3, g=2, b=4)
+
+#provo a cambiare l'ordine delle altre due bande, vedo che non cambia molto perché sono molto correlati, quello che cambia è dove metto l'infrarosso
+im.multiframe(1,2)
+im.plotRGB(sentinel, r=4, g=3, b=2)
+im.plotRGB(sentinel, r=4, g=2, b=3)
+
+
+###### fare matrice di plot di correlazione tra gli elementi. Vale anche per le tabelle, in cui fa le correlazioni tra le varrie colonne
+pairs(sentinel)
+#c'è anche ggpairs, che però va usato sui dataframe, forse ce lo farà più avanti
 
 
 
