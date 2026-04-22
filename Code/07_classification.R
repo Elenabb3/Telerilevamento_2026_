@@ -32,4 +32,47 @@ plot(dji)
 
 djic <- im.classify(dji, num_clusters=3)
 
+#classificazione mato grosso
+m06 <- im.import("matogrosso_ast_2006209_lrg.jpg")  
+m92 <- im.import("matogrosso_l5_1992219_lrg.jpg")
+
+par(mfrow=c(1,2))
+plot(m92)
+plot(m06)
+
+m92c <- im.classify(m92, num_clusters=2, seed=19) #classifico con due categorie
+
+#metto etichette
+levels(m92c) <- data.frame(
+  value = c(2, 1),
+  label = c("forest", "human")
+)
+
+m92c #ora vedo che ha messo le etichette negli attributi dell'elemento
+
+m06c <- im.classify(m06, num_clusters=2, seed=19)
+levels(m06c) <- data.frame(
+  value = c(2, 1),
+  label = c("forest", "human")
+)
+
+#voglio ottenere istogrammi dalle due immagini che mi diano le percentuali di foresta e di suolo antropizzato
+
+freq92 <- freq(m92c)
+perc92 <- freq92$count * 100 / ncell(m92c) #calcolo delle percentuali, la seconda parte mi da il numero di pixel dell'immagine
+
+freq06 <- freq(m06c)
+perc06 <- freq06$count * 100 / ncell(m06c)
+
+#creo tabella
+tabout <- data.frame(
+      class=c("Forest", "Human"),
+      perc92=c(83,17),
+      perc06=c(45,55)
+)
+      
+tabout
+
+
+
       
