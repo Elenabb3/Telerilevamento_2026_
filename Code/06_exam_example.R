@@ -1,5 +1,5 @@
 library(terra)
-libbrary(imageRy)
+library(imageRy)
 
 setwd("C:\\Users\\elena\\OneDrive - Alma Mater Studiorum Università di Bologna\\Desktop\\uni\\telerilevamento")
 getwd()
