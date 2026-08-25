@@ -1,32 +1,42 @@
 library(terra)
 library(imageRy)
+library(viridis)
  
 setwd("C:/Users/elena/OneDrive - Alma Mater Studiorum Università di Bologna/Desktop/immagini")
-big25_b2 <- rast("T32TQS_20250611T101041_B02_10m.jp2")  # la funzione rast fa parte del pacchetto terra
+
+###immagine 2025
+m2025b2 <- rast("T32TQS_20250611T101041_B02_10m.jp2")  # la funzione rast fa parte del pacchetto terra
 aoi <- ext(714661, 720554, 5145276, 5149034) #xmin, xmax, ymin, ymax
-blue25 <- crop(big25_b2, aoi)
+blu25 <- crop(m2025b2, aoi)
+
+m2025b3 <- rast("T32TQS_20250611T101041_B03_10m.jp2")  # la funzione rast fa parte del pacchetto terra
+gre25 <- crop(m2025b3, aoi)
+
+m2025b4 <- rast("T32TQS_20250611T101041_B04_10m.jp2")  # la funzione rast fa parte del pacchetto terra
+red25 <- crop(m2025b4, aoi)
+
+m2025b8 <- rast("T32TQS_20250611T101041_B08_10m.jp2")  # la funzione rast fa parte del pacchetto terra
+nir25 <- crop(m2025b8, aoi)
 
 
-big25_b3 <- rast("T32TQS_20250611T101041_B03_10m.jp2")  # la funzione rast fa parte del pacchetto terra
-aoi <- ext(714661, 720554, 5145276, 5149034) 
-green25 <- crop(big25_b3, aoi)
+##immagine 2016
+m2016b2 <- rast("T32TQS_20160628T101032_B02_10m.jp2")  # la funzione rast fa parte del pacchetto terra
+blu16 <- crop(m2016b2, aoi)
 
+m2016b3 <- rast("T32TQS_20160628T101032_B03_10m.jp2")  # la funzione rast fa parte del pacchetto terra
+gre16 <- crop(m2016b3, aoi)
 
-big25_b4 <- rast("T32TQS_20250611T101041_B04_10m.jp2")  # la funzione rast fa parte del pacchetto terra
-aoi <- ext(714661, 720554, 5145276, 5149034) #xmin, xmax, ymin, ymax
-red25 <- crop(big25_b4, aoi)
+m2016b4 <- rast("T32TQS_20160628T101032_B04_10m.jp2")  # la funzione rast fa parte del pacchetto terra
+red16 <- crop(m2016b4, aoi)
 
+m2016b8 <- rast("T32TQS_20160628T101032_B08_10m.jp2")  # la funzione rast fa parte del pacchetto terra
+nir16 <- crop(m2016b8, aoi)
 
-big25_b8 <- rast("T32TQS_20250611T101041_B08_10m.jp2")  # la funzione rast fa parte del pacchetto terra
-aoi <- ext(714661, 720554, 5145276, 5149034) #xmin, xmax, ymin, ymax
-nir25 <- crop(big25_b8, aoi)
-
-
-mar2025 <- c(blue25, green25, red25, nir25)   1, 2, 3, 4  #crea elemento con tutte le bande sovrapposte, se lo plotto me le plotta tutte in automatico
+mar16 <- c(blu17, gre16, red16, nir16)  # 1, 2, 3, 4  #crea elemento con tutte le bande sovrapposte, se lo plotto me le plotta tutte in automatico
 #anche se me ne mette solo 3 invecce di 4 e non ho capito perché
 
 
-im.plotRGB(mar2025, 3, 2, 1) #colori  naturali
+im.plotRGB(mar25, 3, 2, 1) #colori  naturali
 
 im.plotRGB(mar25, 4, 3, 2) #NIR nel rosso
 
