@@ -104,16 +104,172 @@ ndvi26 <- im.ndvi(vaia26, 4, 3)
 ndvi <- c(ndvi18, ndvi19, ndvi22, ndvi26)
 plot(ndvi, col=inferno(100))
 
+
 ### si vede la perdita di superficie forestale subito dopo, e poi la ripresa negli anni successivi
 ## nel 2026 i valori di ndvi mi sembrano anche maggiori. Immagino perché la vegetazione è nuova e più giovane/in salute? Oppure vegetazione più erbacea/arbustiva che può dare valori di ndvi maggiori
 # poi da quel che so ora la vegetazione è più diversificata ora che sta ricrescendo perché non è più solo abete rosso, ha senso che le latifoglie abbiano più riflettanza
 # sarebbe carino cercare mappe vegetazione per avvalorare che prima era solo abete rosso
 # confronto con cartina successioni italia che mi dice verso quale tipo di vegetazione tende naturalmente la successione
 
+diff18_26 <- ndvi26 - ndvi18
+plot(diff18_26)
+
+
+##matrice che mi fa vedere tutti i confronti tra i vari anni, non so se ha senso veramente metterla però divertente
+
+anni <- c("2018", "2019", "2022", "2026")
+
+
+par(mfrow = c(4, 4))
+
+for (i in 1:4) {
+  for (j in 1:4) {
+    
+    diff <- ndvi[[j]] - ndvi[[i]]
+    
+    plot(diff,
+         main = paste(anni[j], "-", anni[i]))
+         
+  }
+}
+
+
+
+
+#voglio calcolare le percentuali di valori positivi e negativi
+
+# numero totale di celle valide
+tot <- global(!is.na(diff18_26), "sum", na.rm = TRUE)[1,1]
+
+# celle con differenza positiva
+pos <- global(diff18_26 > 0, "sum", na.rm = TRUE)[1,1]
+
+# celle con differenza negativa
+neg <- global(diff18_26 < 0, "sum", na.rm = TRUE)[1,1]
+
+# celle uguali a zero
+zero <- global(diff18_26 == 0, "sum", na.rm = TRUE)[1,1]
+
+# percentuali
+perc_pos <- pos / tot * 100
+perc_neg <- neg / tot * 100
+perc_zero <- zero / tot * 100
+
+#OPPPURE
+perc_pos <- pos / ncell(diff18_26) * 100
+perc_neg <- neg / ncell(diff18_26) * 100
+perc_zero <- zero / ncell(diff18_26) * 100
+
+
+perc_pos
+perc_neg
+perc_zero
+
+
+#la percentuale di pixel in aumento è significativamente maggiore di quelli in perdita (70/30) quindi al netto, nonostante la temporanea perdita subito dopo vaia, c'è stato un aumento di valori di ndvi dal 2018 al 2026
+#coerentemente a quanto sembrava dalle immagini
+
+
+
+
+###PROVO A FARE UN RIDGELINE PLOT
+
+vaia_ridg=c(ndvi18, ndvi19)  
+names(vaia_ridg) =c("NDVI 2018", "NDVI 2019") # Per assegnare i nomi alle due immagini del vettore
+# Applicazione della funzione im.ridgeline del pacchetto imageRy
+im.ridgeline(vaia_ridg, scale=2, palette="viridis")
+
+
+
+####PROVO A FARE UNO SCATTERPLOT
+
+ndvi=c(ndvi18, ndvi19)
+
+# Verifica del concatenamento  
+plot(ndvi[[1]])     # NDVI pre-evento 
+plot(ndvi[[2]])     # NDVI post-evento 
+
+
+
+# Scatterplot -> non sono male per veder meglio se veramente c'è stato un aumento o diminuzione dell'ndvi o se sembra solo dalle immagini
+### PROVA SCATTERPLOT
+ndvi=c(ndvi18, ndvi19)
+plot(ndvi[[1]])     # NDVI pre-evento 
+plot(ndvi[[2]]) 
+
+pairs(ndvi)                                                                                # creazione matrice scatterplot 
+plot(ndvi[[1]], ndvi[[2]], xlab="NDVI 2018", ylab="NDVI 2019", main="Scatterplot NDVI")    # scatterplot NDVI pre e post-evento 
+abline(0, 1, col="red")                            
+#è effettivamente diminuito
+
+ndvi=c(ndvi19, ndvi22)
+pairs(ndvi)                                                                                # creazione matrice scatterplot 
+plot(ndvi[[1]], ndvi[[2]], xlab="NDVI 2018", ylab="NDVI 2019", main="Scatterplot NDVI")    # scatterplot NDVI pre e post-evento 
+abline(0, 1, col="red")
+#è effettivamente aumentato
+
+ndvi=c(ndvi18, ndvi22)
+pairs(ndvi)                                                                                # creazione matrice scatterplot 
+plot(ndvi[[1]], ndvi[[2]], xlab="NDVI 2018", ylab="NDVI 2022", main="Scatterplot NDVI")    # scatterplot NDVI pre e post-evento 
+abline(0, 1, col="red")
+#??
+
+ndvi=c(ndvi18, ndvi26)
+pairs(ndvi)                                                                                # creazione matrice scatterplot 
+plot(ndvi[[1]], ndvi[[2]], xlab="NDVI 2018", ylab="NDVI 2026", main="Scatterplot NDVI")    # scatterplot NDVI pre e post-evento 
+abline(0, 1, col="red")
+#è aumentato proprio rispetto alla situazione di partenza, come sembrava dalle immagini
+#però io non so realmente leggere gli scatterplot quindi forse mi dovrei informare meglio
+                          
+### PROVA CLASSIFICAZIONE in base all'ndvi
+
+
+class_matrix <- matrix(c(-Inf, 0.2, 1, 
+                         0.2, 0.4, 2, 
+                         0.4, Inf, 3), 
+                       ncol = 3, byrow = TRUE)
+
+classi18 <- classify(ndvi18, class_matrix)
+classi19 <- classify(ndvi19, class_matrix)
+classi22 <- classify(ndvi22, class_matrix)
+classi26 <- classify(ndvi26, class_matrix)
+
+classi <- c(classi18, classi19, classi22, classi26)
+plot(classi)
+
+levels(classi18) <- data.frame(
+  value = c(1, 2, 3),
+  label = c("basso", "medio", "alto")
+)
+plot(classi18)
+
+###ci sta ha senso, si vede quello che vorrei vedere. Però non saprei giustificare perché le classi sono state suddivise in questo modo
+#anche quelli degli esami precedenti, su cosa si sono basati?
+
+
+#e ora calcolo le percentuali, ad esempio: quanta percentuale di vegetazione è stata persa subito dopo l'evento?
+
+
+f18 <- freq(classi18) 
+prop18 <- f18$count / ncell(classi18)
+perc18 <- prop18 * 100
+
+f19 <- freq(classi19) 
+prop19 <- f19$count / ncell(classi19)
+perc19 <- prop19 * 100
+
+#dopodichè si può fare tabella e barplot per visualizzare meglio le differenze
+
+
+
+
+
+
+
+#alcuni esami fanno anche il DVI, io sinceramente non ne vedo l'utilità, tanto mi dice le stesse cose dell'ndvi e comunque non saprei come commentarlo diversamente
+#o forse può avere l'utilità di dare valori assoluti che potrebbero essere utili per calcolare certe cose? BOH
+
 #cercare letteratura che parli dell'evento vaia, interazione col bostrico, interventi che sono poi stati fatti per far riprendere il bosco
-
-
-
 
 ### fare differenze di ndvi per verificare effettivi cambiamenti
 
