@@ -53,5 +53,57 @@ dev.off()
 
 
 
+-----
+
+library(terra)
+library(imageRy)
+library(viridis)
+
+setwd("C:/Users/elena/Downloads")
+
+
+g2017b2 <- rast("T32TNS_20170626T102021_B02_10m.jp2")  # la funzione rast fa parte del pacchetto terra
+aoi <- ext(570477, 573271, 5140025, 5144499) #xmin, xmax, ymin, ymax   NW 570477E 5144499N   SE 573271 E 5140025 N
+blu17 <- crop(g2017b2, aoi)
+
+g2017b3 <- rast("T32TNS_20170626T102021_B03_10m.jp2")
+gre17 <- crop(g2017b3, aoi)
+
+g2017b4 <- rast("T32TNS_20170626T102021_B04_10m.jp2")
+red17 <- crop(g2017b4 , aoi)
+
+g2017b8 <- rast("T32TNS_20170626T102021_B08_10m.jp2")
+nir17 <- crop(g2017b8, aoi)
+
+
+g2026b2 <- rast("T32TNS_20260619T101601_B02_10m.jp2")  # la funzione rast fa parte del pacchetto terra
+blu26 <- crop(g2026b2, aoi)
+
+g2026b3 <- rast("T32TNS_20260619T101601_B03_10m.jp2")
+gre26 <- crop(g2026b3, aoi)
+
+g2026b4 <- rast("T32TNS_20260619T101601_B04_10m.jp2")
+red26 <- crop(g2026b4 , aoi)
+
+g2026b8 <- rast("T32TNS_20260619T101601_B08_10m.jp2")
+nir26 <- crop(g2026b8, aoi)
+
+
+mor17 <- c(blu17, gre17, red17, nir17)
+mor26 <- c(blu26, gre26, red26, nir26)
+
+
+par(mfrow=c(1,2))
+im.plotRGB(mor17, 3, 2, 1)
+im.plotRGB(mor26, 3, 2, 1)
+
+
+ndvi17 <- im.ndvi(mor17, 4, 3)
+ndvi26 <- im.ndvi(mor17, 4, 3)
+ndvi <- c(ndvi17, ndvi26)
+plot(ndvi)
+
+
+
 
                           
