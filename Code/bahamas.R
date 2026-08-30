@@ -183,4 +183,11 @@ p1/p2
 #però non sono comunque sicura che ndmi vada bene anche con 8A perché non mi fido di chat
 
 
+#https://ebird.org/species/bnhnut2?continue
+#https://shelterboxcanada.org/where-we-work/bahamas/hurricane-dorian/
+#https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/ndmi/       ndmi
+#https://www.sciencedirect.com/science/article/pii/S235293852300126X     paper su analisi post dorian
+
+
+
 
