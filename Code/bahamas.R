@@ -1,61 +1,86 @@
+
+#RICHIAMO DEI PACCHETTI
+
 library(terra)
 library(imageRy)
 library(viridis)
-library(viridisLite)
 library(ggplot2)
 library(ggridges)
+#la sandra metteva anche RStoolbox per la classificazione non supervisionata. Serve? a me la fa comunque
 
 
-setwd("C:/Users/elena/Downloads")
+#IMPORTAZIONE E PREPARAZIONE BANDE
 
-b2018b210m <- rast("T17RQK_20180928T160511_B02_10m.jp2")  # la funzione rast fa parte del pacchetto terra
-b2018b310m <- rast("T17RQK_20180928T160511_B03_10m.jp2")
-b2018b410m <- rast("T17RQK_20180928T160511_B04_10m.jp2")
-b2018b810m <- rast("T17RQK_20180928T160511_B08_10m.jp2")
+#Definizione della working directory
 
-bahamas18_10m <- c(b2018b210m, b2018b310m, b2018b410m, b2018b810m)
+setwd("C:/Users/elena/Downloads") #sistemare l'indirizzo che non sarà questo alla fine
+
+#Importazione delle delle bande di Sentinel2 per i 4 anni presi in esame
+#Rast(), del pacchetto terra, crea oggetti SpatRaster
+
+b2018b210m <- rast("T17RQK_20181030T155529_B02_10m.jp2")  
+b2018b310m <- rast("T17RQK_20181030T155529_B03_10m.jp2")
+b2018b410m <- rast("T17RQK_20181030T155529_B04_10m.jp2")
+b2018b810m <- rast("T17RQK_20181030T155529_B08_10m.jp2")
 
 b2019b210m <- rast("T17RQK_20191003T160511_B02_10m.jp2")
 b2019b310m <- rast("T17RQK_20191003T160511_B03_10m.jp2")
 b2019b410m <- rast("T17RQK_20191003T160511_B04_10m.jp2")
 b2019b810m <- rast("T17RQK_20191003T160511_B08_10m.jp2")
 
-bahamas19_10m <- c(b2019b210m, b2019b310m, b2019b410m, b2019b810m)
-
 b2021b210m <- rast("T17RQK_20211027T160509_B02_10m.jp2")
 b2021b310m <- rast("T17RQK_20211027T160509_B03_10m.jp2")
 b2021b410m <- rast("T17RQK_20211027T160509_B04_10m.jp2")
 b2021b810m <- rast("T17RQK_20211027T160509_B08_10m.jp2")
 
+b2023b210m <- rast("T17RQK_20231029T155521_B02_10m.jp2")
+b2023b310m <- rast("T17RQK_20231029T155521_B03_10m.jp2")
+b2023b410m <- rast("T17RQK_20231029T155521_B04_10m.jp2")
+b2023b810m <- rast("T17RQK_20231029T155521_B08_10m.jp2")
+
+#Concatenamento delle bande dei singoli anni in stack
+
+bahamas18_10m <- c(b2018b210m, b2018b310m, b2018b410m, b2018b810m)
+bahamas19_10m <- c(b2019b210m, b2019b310m, b2019b410m, b2019b810m)
 bahamas21_10m <- c(b2021b210m, b2021b310m, b2021b410m, b2021b810m)
 
 
-####e poi eventualmente aggiungere anche 2023
 
+#Definisco l'area di interesse con la funzione ext() del pacchetto terra. 
+#Negli argomenti sono indicate le coordinate UTM in questo ordine: xmin, xmax, ymin, ymax
+aoi <- ext(735514, 767529, 2941644, 2954746)
 
-
-aoi <- ext(746355, 767184, 2944088, 2951892) #xmin, xmax, ymin, ymax   675632  5102177  681748  5099278
+#Ritaglio dell'area di interesse dalle immagini originali con la funzione crop() del pacchetto terra
 
 b18_10m <- crop(bahamas18_10m, aoi)
 b19_10m <- crop(bahamas19_10m, aoi)
 b21_10m <- crop(bahamas21_10m, aoi)
+b23_10m <- crop(bahamas23_10m, aoi)
 
 
-par(mfrow=c(3,1))
-plot(b18_10m[[4]]) 
-plot(b19_10m[[4]])
-plot(b21_10m[[4]])
+#par(mfrow=c(3,1))
+#plot(b18_10m[[4]]) 
+#plot(b19_10m[[4]])
+#plot(b21_10m[[4]])
 #si vede già che la riflettanza nel NIR è diminuita
 
+
+#VISUALIZZAZIONE DATI
+
+#Vsualizzazione a colori naturali con im.plotRGB() e r = rosso, g = verde, b = blu
 
 im.plotRGB(b18_10m, 3, 2, 1)
 im.plotRGB(b19_10m, 3, 2, 1)
 im.plotRGB(b21_10m, 3, 2, 1)
 
+#Visualizzazione a falsi colori: r = NIR, g = rosso, b = verde
 
 im.plotRGB(b18_10m, 4, 3, 2)
 im.plotRGB(b19_10m, 4, 3, 2)
 im.plotRGB(b21_10m, 4, 3, 2)
+
+
+#------------------------------------------------------------------
 
 ndvi18 <- im.ndvi(b18_10m, 4, 3)
 ndvi19 <- im.ndvi(b19_10m, 4, 3)
