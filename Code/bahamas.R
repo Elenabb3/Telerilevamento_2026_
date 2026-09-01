@@ -82,48 +82,80 @@ im.plotRGB(b21_10m, 4, 3, 2)
 
 #------------------------------------------------------------------
 
+#NDVI(Normalized Difference Vegetation Index)
+
 ndvi18 <- im.ndvi(b18_10m, 4, 3)
 ndvi19 <- im.ndvi(b19_10m, 4, 3)
 ndvi21 <- im.ndvi(b21_10m, 4, 3)
+ndvi23 <- im.ndvi(b23_10m, 4, 3)
 
-ndvi <- c(ndvi18, ndvi19, ndvi21)
+ndvi <- c(ndvi18, ndvi19, ndvi21, ndvi23)
+
+#visualizzazione ndvi con palette inferno di viridis
 plot(ndvi, col = inferno(100))
 
 
-names(ndvi) =c("NDVI 2018", "NDVI 2019", "NDVI 2021") # Per assegnare i nomi alle due immagini del vettore
-# Applicazione della funzione im.ridgeline del pacchetto imageRy
-im.ridgeline(ndvi, scale=2, palette="viridis")
-#che gioia si vede effettivamente la differenza molto  bene
+#Ridgeline plot dei valori di ndvi
 
-pairs(ndvi)                                                                                # creazione matrice scatterplot 
-plot(ndvi[[1]], ndvi[[2]], xlab="NDVI 2018", ylab="NDVI 2019", main="Scatterplot NDVI")    # scatterplot NDVI pre e post-evento 
-abline(0, 1, col="red") 
+names(ndvi) =c("NDVI 2018", "NDVI 2019", "NDVI 2021", "NDVI 2023") #Assegna i nomi alle immagini nell'oggetto ndvi
+im.ridgeline(ndvi, scale=2, palette="viridis") #potrei dire qualcosa sulla funzione im.ridgeline?
+
+#-------------------------------------------------------------------
+#LO SCATTERPLOT CHE PERò NON SO NEANCHE IO SE METTERLO
+#pairs(ndvi)                                                                                # creazione matrice scatterplot 
+#plot(ndvi[[1]], ndvi[[2]], xlab="NDVI 2018", ylab="NDVI 2019", main="Scatterplot NDVI")    # scatterplot NDVI pre e post-evento 
+#abline(0, 1, col="red") 
 
 #il fatto che ci sia incluso anche un pezzo di mare sballa i risultati?
 
-cfr = c(ndvi18, ndvi21)
-pairs(cfr)                                                                                # creazione matrice scatterplot 
-plot(cfr[[1]], cfr[[2]], xlab="NDVI 2018", ylab="NDVI 2021", main="Scatterplot NDVI")    # scatterplot NDVI pre e post-evento 
-abline(0, 1, col="red") 
+#cfr = c(ndvi18, ndvi21)
+#pairs(cfr)                                                                                # creazione matrice scatterplot 
+#plot(cfr[[1]], cfr[[2]], xlab="NDVI 2018", ylab="NDVI 2021", main="Scatterplot NDVI")    # scatterplot NDVI pre e post-evento 
+#abline(0, 1, col="red") 
 #quindi il 2021 ha comunque NDVI più basso, però non in maniera pronunciata come nel primo confronto
-
-#il fatto che ci sia incluso anche un pezzo di mare sballa i risultati?
-
+#---------------------------------------------------------------------------------------------------
 
 
+#Differenze di ndvi tra 2018-2019, 2019-2021, 2018-2021
 
-d_ndvi <- ndvi[[2]] - ndvi[[1]]
-plot(d_ndvi, col = inferno(100))
+d_ndvi18_19 <- ndvi[[2]] - ndvi[[1]]
+plot(d_ndvi18_19, col = inferno(100))
 
 
-d_ndvi1821 <- ndvi[[3]] - ndvi[[1]]
-plot(d_ndvi1821, col = inferno(100))
+d_ndvi19_21 <- ndvi[[3]] - ndvi[[2]]
+plot(d_ndvi19_21, col = inferno(100))
 #qui dal grafico non si capisce bene perché i valori sono molto vicini allo 0
 #bisognerebbe guardare la distribuzione dei pixel
 
+d_ndvi18_21 <- ndvi[[3]] - ndvi[[1]]
+plot(d_ndvi18_21, col = inferno(100))
 
 
+#----------------------------------------------------
+#NDMI (Normalized Difference Moisture Index)
 
+#intanto richiamo bande che non ho ancora importato, e prendo 11 20m e 8A 20m. Al massimo correggere in seguito
+
+ndmi18 <- (b18_20m[[1]]-b18_20m[[2]])/(b18_20m[[1]]+b18_20m[[2]]) #sistemare poi i riferimenti alle bande
+ndmi19 <- (b19_20m[[1]]-b19_20m[[2]])/(b19_20m[[1]]+b19_20m[[2]])
+ndmi21 <- (b21_20m[[1]]-b21_20m[[2]])/(b21_20m[[1]]+b21_20m[[2]])
+ndmi <- c(ndmi18, ndmi19, ndmi21)
+plot(ndmi)
+
+#differenza di ndmi tra 2018 e 2021
+d_ndmi18_21 <- ndmi[[3]] - ndmi[[1]]
+plot(d_ndmi18_21, col = inferno(100))
+
+#aggiunger ridgeline?
+names(ndmi) <- c("NDMI 2018", "NDMI 2019", "NDMI 2021")
+im.ridgeline(ndmi, scale=2, palette="viridis")
+
+
+#-------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------
+#=============================================================================================================
+
+#CLASSIFICAZIONE
 
 #classificazione non supervisionata
 
@@ -133,6 +165,14 @@ im.classify(ndvi19, num_clusters = 4, do_plot = TRUE)
 
 #potrebbe funzionare tbh. Non saprei con quanti cluster però. O forse è meglio se decido io le categorie di ndvi?
 #in quel caso mi serve un criterio secondo cui definirle
+
+
+
+
+
+
+
+
 
 
 
