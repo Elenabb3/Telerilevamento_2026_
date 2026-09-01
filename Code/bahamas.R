@@ -23,20 +23,28 @@ b2018b310m <- rast("T17RQK_20181030T155529_B03_10m.jp2")
 b2018b410m <- rast("T17RQK_20181030T155529_B04_10m.jp2")
 b2018b810m <- rast("T17RQK_20181030T155529_B08_10m.jp2")
 
+#importo anche la banda 11 a risoluzione 20m, servirà più tardi per calcolare l'NDMI
+b2018b11 <- rast("T17RQK_20181030T155529_B11_20m.jp2")
+
+
 b2019b210m <- rast("T17RQK_20191003T160511_B02_10m.jp2")
 b2019b310m <- rast("T17RQK_20191003T160511_B03_10m.jp2")
 b2019b410m <- rast("T17RQK_20191003T160511_B04_10m.jp2")
 b2019b810m <- rast("T17RQK_20191003T160511_B08_10m.jp2")
+b2019b11 <- rast("T17RQK_20191003T160511_B11_20m.jp2")
+
 
 b2021b210m <- rast("T17RQK_20211027T160509_B02_10m.jp2")
 b2021b310m <- rast("T17RQK_20211027T160509_B03_10m.jp2")
 b2021b410m <- rast("T17RQK_20211027T160509_B04_10m.jp2")
 b2021b810m <- rast("T17RQK_20211027T160509_B08_10m.jp2")
+b2021b11 <- rast("T17RQK_20211027T160509_B11_20m.jp2")
 
 b2023b210m <- rast("T17RQK_20231029T155521_B02_10m.jp2")
 b2023b310m <- rast("T17RQK_20231029T155521_B03_10m.jp2")
 b2023b410m <- rast("T17RQK_20231029T155521_B04_10m.jp2")
 b2023b810m <- rast("T17RQK_20231029T155521_B08_10m.jp2")
+b2023b11 <- rast("T17RQK_20231029T155521_B11_20m.jp2")
 
 #Concatenamento delle bande dei singoli anni in stack
 
@@ -56,6 +64,13 @@ b18_10m <- crop(bahamas18_10m, aoi)
 b19_10m <- crop(bahamas19_10m, aoi)
 b21_10m <- crop(bahamas21_10m, aoi)
 b23_10m <- crop(bahamas23_10m, aoi)
+
+#ritaglio della banda 11 e sovrascrivo quella iniziale
+b2018b11 <- crop(b2018b11, aoi)
+b2019b11 <- crop(b2019b11, aoi)
+b2021b11 <- crop(b2021b11, aoi)
+b2023b11 <- crop(b2023b11, aoi)
+
 
 
 #par(mfrow=c(3,1))
@@ -134,34 +149,67 @@ plot(d_ndvi18_21, col = inferno(100))
 #----------------------------------------------------
 #NDMI (Normalized Difference Moisture Index)
 
-#intanto richiamo bande che non ho ancora importato, e prendo 11 20m e 8A 20m. Al massimo correggere in seguito
+#ricampionamento della banda 8 per portarla a risoluzione 20m
 
-ndmi18 <- (b18_20m[[1]]-b18_20m[[2]])/(b18_20m[[1]]+b18_20m[[2]]) #sistemare poi i riferimenti alle bande
-ndmi19 <- (b19_20m[[1]]-b19_20m[[2]])/(b19_20m[[1]]+b19_20m[[2]])
-ndmi21 <- (b21_20m[[1]]-b21_20m[[2]])/(b21_20m[[1]]+b21_20m[[2]])
-ndmi <- c(ndmi18, ndmi19, ndmi21)
+b2018b8_20m <- resample(b18_10m[[4]], b2018b11, method = "average")
+b2019b8_20m <- resample(b19_10m[[4]], b2019b11, method = "average")
+b2021b8_20m <- resample(b21_10m[[4]], b2021b11, method = "average")
+b2023b8_20m <- resample(b23_10m[[4]], b2023b11, method = "average")
+
+
+
+#-------
+#provo a plottare le due bande 8, prime e dopo il ricampionamento
+#è normale che i valori siano così diversi e più alti nel ricampionamento a 20m?
+#par(mfrow=c(2,1))
+#plot(b2018b8_20m)
+#plot(b18_10m[[4]])
+
+#prova per vedere se il prima e dopo sono uguali
+#plottando e basta me li mette su scale diverse, non so perché, quindi definisco asse z
+
+#min_B8 <- minmax(b18_10m[[4]])[1, 1]
+#max_B8 <- minmax(b18_10m[[4]])[2, 1]
+
+#plot(b2018b8_20m, zlim = c(min_B8, max_B8))
+#plot(b18_10m[[4]], zlim = c(min_B8, max_B8))
+
+#eh che cazzo però perché me li mette su scale diverse non capisco se sono uguali o meno
+#-------
+
+
+ndndmi18 <- (b2018b8_20m-b2018b11)/(b2018b8_20m+b2018b11)
+ndmi19 <- (b2019b8_20m-b2019b11)/(b2019b8_20m+b2019b11)
+ndmi21 <- (b2021b8_20m-b2021b11)/(b2021b8_20m+b2021b11)
+ndmi23 <- (b2023b8_20m-b2023b11)/(b2023b8_20m+b2023b11)
+ndmi <- c(ndmi18, ndmi19, ndmi21, ndmi23)
 plot(ndmi)
+
 
 #differenza di ndmi tra 2018 e 2021
 d_ndmi18_21 <- ndmi[[3]] - ndmi[[1]]
 plot(d_ndmi18_21, col = inferno(100))
 
 #aggiunger ridgeline?
-names(ndmi) <- c("NDMI 2018", "NDMI 2019", "NDMI 2021")
+names(ndmi) <- c("NDMI 2018", "NDMI 2019", "NDMI 2021", "NDMI 2023")
 im.ridgeline(ndmi, scale=2, palette="viridis")
+#non so, i risultati sono un po' strani e non sarei sicura come interpretarli
+
+
 
 
 #-------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------
 #=============================================================================================================
 
-#CLASSIFICAZIONE
+#CLASSIFICAZIONE IN BASE ALL'NDVI
 
 #classificazione non supervisionata
 
-par(mfrow=c(2,1))
+par(mfrow=c(3,1))
 im.classify(ndvi18, num_clusters = 4, do_plot = TRUE)
 im.classify(ndvi19, num_clusters = 4, do_plot = TRUE)
+im.classify(ndvi21, num_clusters = 4, do_plot = TRUE)
 
 #potrebbe funzionare tbh. Non saprei con quanti cluster però. O forse è meglio se decido io le categorie di ndvi?
 #in quel caso mi serve un criterio secondo cui definirle
