@@ -216,8 +216,21 @@ im.classify(ndvi21, num_clusters = 4, do_plot = TRUE)
 
 
 
+#CLASSIFICAZIONE SUPERVISIONATA
 
+#divido così le classi
+#<0.2 -> no veg/acqua. 0.2-0.4 -> veg scarsa e/o stressata. 0.4 - 0.7 -> veg in salute. >0.7 -> veg particolarmente densa/florida
 
+cat <- matrix(c(
+  -Inf, 0.2,  1,
+   0.2, 0.4,  2,
+   0.4, 0.7,  3,
+   0.7, Inf,  4,
+), ncol = 3, byrow = TRUE)
+
+ndvi_class <- classify(ndvi, rcl = cat)
+
+plot(ndvi_class)
 
 
 
