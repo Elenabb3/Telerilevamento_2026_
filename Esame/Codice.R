@@ -1,5 +1,6 @@
-
+#=======================
 #RICHIAMO DEI PACCHETTI
+#=======================
 
 library(terra)
 library(imageRy)
@@ -16,8 +17,8 @@ library(patchwork)
 
 setwd("C:/Users/elena/Downloads") #sistemare l'indirizzo che non sarà questo alla fine
 
-#Importazione delle delle bande di Sentinel2 per i 4 anni presi in esame
-#Rast(), del pacchetto terra, crea oggetti SpatRaster
+#Importazione delle delle bande di Sentinel2 per i 3 anni presi in esame
+#rast(), del pacchetto terra, crea oggetti SpatRaster
 
 b2018b210m <- rast("T17RQK_20181030T155529_B02_10m.jp2")  
 b2018b310m <- rast("T17RQK_20181030T155529_B03_10m.jp2")
@@ -362,6 +363,7 @@ p18 + p19 + p21
 #https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/ndmi/       ndmi
 #https://www.sciencedirect.com/science/article/pii/S235293852300126X     paper su analisi post dorian
 
+#https://support.zendesk.com/hc/it/articles/4408846544922-Formattazione-del-testo-con-Markdown da togliere, guida markdown
 
 #FINE=================================================================
 
