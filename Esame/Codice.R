@@ -326,8 +326,13 @@ p18 <- ggplot(tab, aes(x = class, y = perc18, fill = class)) +
    ylim(0,100) +
    scale_fill_viridis(discrete = TRUE, option = "mako") +     #per generare colori discreti da palette viridis
    labs(title = "2018" , x = "classi", y = "copertura(%)") +
-   theme(legend.position = "none") +                          #toglie la legenda
+   theme(legend.position = "none") +                          #toglie la legenda, in teoria, ma in realtà me la plotta comunque WHYYY
    theme_minimal()
+
+
+
+
+
 
 p18 <- ggplot(tabout, aes(x = class, y = perc18, fill = class)) +
   geom_bar(stat = "identity") +
