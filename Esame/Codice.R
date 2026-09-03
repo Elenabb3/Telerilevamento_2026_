@@ -8,52 +8,43 @@ library(viridis)
 library(ggplot2)
 library(ggridges)
 library(patchwork)
-#la sandra metteva anche RStoolbox per la classificazione non supervisionata. Serve? a me la fa comunque
 
 
 #IMPORTAZIONE E PREPARAZIONE BANDE
 
 #Definizione della working directory
 
-setwd("C:/Users/elena/Downloads") #sistemare l'indirizzo che non sarà questo alla fine
+setwd("C:/Users/elena/Desktop")
 
 #Importazione delle delle bande di Sentinel2 per i 3 anni presi in esame
 #rast(), del pacchetto terra, crea oggetti SpatRaster
 
-b2018b210m <- rast("T17RQK_20181030T155529_B02_10m.jp2")  
-b2018b310m <- rast("T17RQK_20181030T155529_B03_10m.jp2")
-b2018b410m <- rast("T17RQK_20181030T155529_B04_10m.jp2")
-b2018b810m <- rast("T17RQK_20181030T155529_B08_10m.jp2")
+or2018_b2 <- rast("T17RQK_20181030T155529_B02_10m.jp2")  
+or2018_b3 <- rast("T17RQK_20181030T155529_B03_10m.jp2")
+or2018_b4 <- rast("T17RQK_20181030T155529_B04_10m.jp2")
+or2018_b8 <- rast("T17RQK_20181030T155529_B08_10m.jp2")
+
+or2019_b2 <- rast("T17RQK_20191003T160511_B02_10m.jp2")
+or2019_b3 <- rast("T17RQK_20191003T160511_B03_10m.jp2")
+or2019_b4 <- rast("T17RQK_20191003T160511_B04_10m.jp2")
+or2019_b8 <- rast("T17RQK_20191003T160511_B08_10m.jp2")
+
+or2021_b2 <- rast("T17RQK_20211027T160509_B02_10m.jp2")
+or2021_b3 <- rast("T17RQK_20211027T160509_B03_10m.jp2")
+or2021_b4 <- rast("T17RQK_20211027T160509_B04_10m.jp2")
+or2021_b8 <- rast("T17RQK_20211027T160509_B08_10m.jp2")
+
+#Concatenamento delle bande in stack
+
+or2018 <- c(or2018_b2, or2018_b3, or2018_b4, or2018_b8)
+or2019 <- c(or2019_b2, or2019_b3, or2019_b4, or2019_b8)
+or2021 <- c(or2021_b2, or2021_b3, or2021_b4, or2021_b8)
+
 
 #importo anche la banda 11 a risoluzione 20m, servirà più tardi per calcolare l'NDMI
-b2018b11 <- rast("T17RQK_20181030T155529_B11_20m.jp2")
-
-
-b2019b210m <- rast("T17RQK_20191003T160511_B02_10m.jp2")
-b2019b310m <- rast("T17RQK_20191003T160511_B03_10m.jp2")
-b2019b410m <- rast("T17RQK_20191003T160511_B04_10m.jp2")
-b2019b810m <- rast("T17RQK_20191003T160511_B08_10m.jp2")
-b2019b11 <- rast("T17RQK_20191003T160511_B11_20m.jp2")
-
-
-b2021b210m <- rast("T17RQK_20211027T160509_B02_10m.jp2")
-b2021b310m <- rast("T17RQK_20211027T160509_B03_10m.jp2")
-b2021b410m <- rast("T17RQK_20211027T160509_B04_10m.jp2")
-b2021b810m <- rast("T17RQK_20211027T160509_B08_10m.jp2")
-b2021b11 <- rast("T17RQK_20211027T160509_B11_20m.jp2")
-
-#b2023b210m <- rast("T17RQK_20231029T155521_B02_10m.jp2")
-#b2023b310m <- rast("T17RQK_20231029T155521_B03_10m.jp2")
-#b2023b410m <- rast("T17RQK_20231029T155521_B04_10m.jp2")
-#b2023b810m <- rast("T17RQK_20231029T155521_B08_10m.jp2")
-#b2023b11 <- rast("T17RQK_20231029T155521_B11_20m.jp2")
-
-#Concatenamento delle bande dei singoli anni in stack
-
-bahamas18_10m <- c(b2018b210m, b2018b310m, b2018b410m, b2018b810m)
-bahamas19_10m <- c(b2019b210m, b2019b310m, b2019b410m, b2019b810m)
-bahamas21_10m <- c(b2021b210m, b2021b310m, b2021b410m, b2021b810m)
-#bahamas23_10m <- c(b2023b210m, b2023b310m, b2023b410m, b2023b810m)
+or2018_b11 <- rast("T17RQK_20181030T155529_B11_20m.jp2")
+or2019_b11 <- rast("T17RQK_20191003T160511_B11_20m.jp2")
+or2021_b11 <- rast("T17RQK_20211027T160509_B11_20m.jp2")
 
 
 #Definisco l'area di interesse con la funzione ext() del pacchetto terra. 
@@ -68,58 +59,73 @@ aoi <- ext(754809, 763308, 2946037, 2953282)
 
 #Ritaglio dell'area di interesse dalle immagini originali con la funzione crop() del pacchetto terra
 
-b18_10m <- crop(bahamas18_10m, aoi)
-b19_10m <- crop(bahamas19_10m, aoi)
-b21_10m <- crop(bahamas21_10m, aoi)
-#b23_10m <- crop(bahamas23_10m, aoi)
+oct18 <- crop(or2018, aoi)
+oct19 <- crop(or2019, aoi)
+oct21 <- crop(or2021, aoi)
 
-#ritaglio della banda 11 e sovrascrivo quella iniziale
-b2018b11 <- crop(b2018b11, aoi)
-b2019b11 <- crop(b2019b11, aoi)
-b2021b11 <- crop(b2021b11, aoi)
+
+#ritaglio della banda 11
+oct18b11 <- crop(or2018_b11 , aoi)
+oct19b11 <- crop(or2019_b11 , aoi)
+oct21b11 <- crop(or2021_b11 , aoi)
 #b2023b11 <- crop(b2023b11, aoi)
-
-
-
-#par(mfrow=c(3,1))
-#plot(b18_10m[[4]]) 
-#plot(b19_10m[[4]])
-#plot(b21_10m[[4]])
-#si vede già che la riflettanza nel NIR è diminuita
 
 
 #VISUALIZZAZIONE DATI
 
 #Vsualizzazione a colori naturali con im.plotRGB() e r = rosso, g = verde, b = blu
-par(mfrow=c(2,2))
-im.plotRGB(b18_10m, 3, 2, 1)
-im.plotRGB(b19_10m, 3, 2, 1)
-im.plotRGB(b21_10m, 3, 2, 1)
-#im.plotRGB(b23_10m, 3, 2, 1)
+
+
+#se uso la funzione di terra invece che di imagery il multiframe non mi da problemi
+par(mfrow=c(1,3))  
+plotRGB(oct18, 3, 2, 1, stretch ="lin")
+plotRGB(oct19, 3, 2, 1, stretch ="lin")
+plotRGB(oct21, 3, 2, 1, stretch ="lin")
+
+
+png("imgprova.png", width = 800, height = 600, res=100)     # dettagli output 
+
+par(mfrow=c(1,3))
+im.plotRGB(oct18, 3, 2, 1)
+im.plotRGB(oct19, 3, 2, 1)
+im.plotRGB(oct21, 3, 2, 1)
+
+dev.off() 
 
 #Visualizzazione a falsi colori: r = NIR, g = rosso, b = verde
 
-im.plotRGB(b18_10m, 4, 3, 2)
-im.plotRGB(b19_10m, 4, 3, 2)
-im.plotRGB(b21_10m, 4, 3, 2)
-#im.plotRGB(b23_10m, 4, 3, 2)
+plotRGB(oct18, 4, 3, 2, stretch ="lin", main = "NIR 2018")
+plotRGB(oct19, 4, 3, 2, stretch ="lin", main = "NIR 2019")
+plotRGB(oct21, 4, 3, 2, stretch ="lin", main = "NIR 2021")
 
 #------------------------------------------------------------------
 
 #NDVI(Normalized Difference Vegetation Index)
 
-ndvi18 <- im.ndvi(b18_10m, 4, 3)
-ndvi19 <- im.ndvi(b19_10m, 4, 3)
-ndvi21 <- im.ndvi(b21_10m, 4, 3)
-#ndvi23 <- im.ndvi(b23_10m, 4, 3)
+#Calcolo ndvi con funzione im.ndvi() di imageRy
+ndvi18 <- im.ndvi(oct18, 4, 3)
+ndvi19 <- im.ndvi(oct19, 4, 3)
+ndvi21 <- im.ndvi(oct21, 4, 3)
 
 ndvi <- c(ndvi18, ndvi19, ndvi21)
 
 #visualizzazione ndvi con palette inferno di viridis
-plot(ndvi, col = inferno(100))
+plot(ndvi, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRUE), main = "NDVI")
 
-#fuorviante perché me li classifica con scale diverse. Porco dio
+#però vorrei poter modificare i titoletti. Vedo che negli altri esami non hanno fatto la stack ma li hanno plottati  separati
 
+names(ndvi) <- c("2018", "2019", "2021")
+plot(ndvi, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRUE))
+#posso fare così e rinominare, oppure
+
+plot(ndvi18, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2018")
+plot(ndvi19, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2019")
+plot(ndvi21, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2021")
+#qui l'unica cosa migliore è che i grafici sono più distanziati e quindi barre e coordinate non sono eccessivamente vicine. BOH?
+
+#aver fatto lo stack prima ha comunque senso, perché mi permette di usare i valori totali  di ndvi per definire la scala
+#visualizzarle con la stessa scala è bello, però allo stesso tempo rende più difficile capire quali sono i valori massimi di ndvi dei singoli plot
+#è un problema?
 
 
 #Ridgeline plot dei valori di ndvi
@@ -164,15 +170,15 @@ plot(d_ndvi18_21, col = inferno(100))
 
 #ricampionamento della banda 8 per portarla a risoluzione 20m
 
-b2018b8_20m <- resample(b18_10m[[4]], b2018b11, method = "average")
-b2019b8_20m <- resample(b19_10m[[4]], b2019b11, method = "average")
-b2021b8_20m <- resample(b21_10m[[4]], b2021b11, method = "average")
+oct18b8_20m <- resample(oct18[[4]], oct18b11, method = "average")
+oct19b8_20m <- resample(oct19[[4]], oct19b11, method = "average")
+oct21b8_20m <- resample(oct21[[4]], oct21b11, method = "average")
 #b2023b8_20m <- resample(b23_10m[[4]], b2023b11, method = "average")
 
 
-ndmi18 <- (b2018b8_20m-b2018b11)/(b2018b8_20m+b2018b11)
-ndmi19 <- (b2019b8_20m-b2019b11)/(b2019b8_20m+b2019b11)
-ndmi21 <- (b2021b8_20m-b2021b11)/(b2021b8_20m+b2021b11)
+ndmi18 <- (oct18b8_20m - oct18b11)/(oct18b8_20m + oct18b11)
+ndmi19 <- (oct19b8_20m - oct19b11)/(oct19b8_20m + oct19b11)
+ndmi21 <- (oct21b8_20m - oct21b11)/(oct21b8_20m + oct21b11)
 #ndmi23 <- (b2023b8_20m-b2023b11)/(b2023b8_20m+b2023b11)
 ndmi <- c(ndmi18, ndmi19, ndmi21)
 plot(ndmi)
@@ -236,9 +242,9 @@ cat <- matrix(c(
   0.7, Inf,  4
 ), ncol = 3, byrow = TRUE)
 
-ndvi_class <- classify(ndvi, rcl = cat)
+ndvi_classi <- classify(ndvi, rcl = cat)
 
-plot(ndvi_class)
+plot(ndvi_classi)
 
 
 
