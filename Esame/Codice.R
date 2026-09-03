@@ -181,7 +181,7 @@ ndmi19 <- (oct19b8_20m - oct19b11)/(oct19b8_20m + oct19b11)
 ndmi21 <- (oct21b8_20m - oct21b11)/(oct21b8_20m + oct21b11)
 #ndmi23 <- (b2023b8_20m-b2023b11)/(b2023b8_20m+b2023b11)
 ndmi <- c(ndmi18, ndmi19, ndmi21)
-plot(ndmi)
+plot(ndmi, col = mako(100)) 
 
 
 #differenza di ndmi tra 2018 e 2021
