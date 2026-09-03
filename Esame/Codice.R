@@ -300,6 +300,9 @@ tabout <- data.frame(
 
 tabout
 
+#provare a vedere se la tabella si crea anche se inserisco l'oggetti invece dei singoli elementi tipo
+#perc18=perc_18 ecc.. in quel caso forse dovrò capire come gestire le cifre decimali
+
 
 #grafici a barre con le percentuali
 #da sistemare per bene l'assegnazione dei colori ecc...
