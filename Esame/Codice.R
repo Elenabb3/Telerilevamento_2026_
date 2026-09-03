@@ -281,30 +281,25 @@ perc_19 <- freq_19$count * 100 / ncell(classi)
 freq_21 <- freq(classi[[3]])
 perc_21 <- freq_21$count * 100 / ncell(classi)
 
-#freq_23 <- freq(classi[[4]])
-#perc_23 <- freq_23$count * 100 / ncell(classi)
+#arrotondamento a una cifra decimale
+perc_18 <- round(perc_18, 1)
+perc_19 <- round(perc_19, 1)
+perc_21 <- round(perc_21, 1)
 
-perc_18
-perc_19
-perc_21
-#perc_23
 
 #metto in una tabella
 
-tabout <- data.frame(
+tab <- data.frame(
   class=c("No veg", "Vegetazione scarsa/stressata", "Vegetazione abbondante"),
-  perc18=c(1.7, 62.4, 35.8),
-  perc19=c(6.9, 90.0, 3.1),
-  perc21=c(4.8, 91.7, 3.5)
+  perc18=perc_18,
+  perc19=perc_19,
+  perc21=perc_21
 )
 
-tabout
+tab
 
-#provare a vedere se la tabella si crea anche se inserisco l'oggetti invece dei singoli elementi tipo
-#perc18=perc_18 ecc.. in quel caso forse dovrò capire come gestire le cifre decimali
+#GRAFICI A BARRE DELLE PERCENTUALI
 
-
-#grafici a barre con le percentuali
 #da sistemare per bene l'assegnazione dei colori ecc...
 
 
@@ -325,6 +320,14 @@ colori = c("grey", "yellow", "darkgreen")
 #-> per assegnare i colori del grafico, che però sostituirò con una palette
 #e quindi lì guardare script sandra per come assegnare i colori
 
+
+p18 <- ggplot(tab, aes(x = class, y = perc18, fill = class)) +
+   geom_bar(stat = "identity", position = "dodge")  +         #anche se comunque, se io non metto dodge non cambia proprio nulla
+   ylim(0,100) +
+   scale_fill_viridis(discrete = TRUE, option = "mako") +     #per generare colori discreti da palette viridis
+   labs(title = "2018" , x = "classi", y = "copertura(%)") +
+   theme(legend.position = "none") +                          #toglie la legenda
+   theme_minimal()
 
 p18 <- ggplot(tabout, aes(x = class, y = perc18, fill = class)) +
   geom_bar(stat = "identity") +
