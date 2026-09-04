@@ -14,13 +14,10 @@ library(patchwork)  # Visualizzazione e affiancamento di grafici
 #===================================
 
 #Definizione della working directory
-
 setwd("C:/Users/elena/Desktop/Telesame")
-
 
 #Importazione delle delle bande di Sentinel-2
 #con rast(), pacchetto terra, crea oggetti SpatRaster
-
 or2018_b2 <- rast("T17RQK_20181030T155529_B02_10m.jp2")  
 or2018_b3 <- rast("T17RQK_20181030T155529_B03_10m.jp2")
 or2018_b4 <- rast("T17RQK_20181030T155529_B04_10m.jp2")
@@ -36,36 +33,26 @@ or2021_b3 <- rast("T17RQK_20211027T160509_B03_10m.jp2")
 or2021_b4 <- rast("T17RQK_20211027T160509_B04_10m.jp2")
 or2021_b8 <- rast("T17RQK_20211027T160509_B08_10m.jp2")
 
-
 #Concatenamento delle bande in vettori
-
 or2018 <- c(or2018_b2, or2018_b3, or2018_b4, or2018_b8)
 or2019 <- c(or2019_b2, or2019_b3, or2019_b4, or2019_b8)
 or2021 <- c(or2021_b2, or2021_b3, or2021_b4, or2021_b8)
 
-
 #Importazione della banda 11 a risoluzione 20m, servirà più tardi per calcolare l'NDMI
-
 or2018_b11 <- rast("T17RQK_20181030T155529_B11_20m.jp2")
 or2019_b11 <- rast("T17RQK_20191003T160511_B11_20m.jp2")
 or2021_b11 <- rast("T17RQK_20211027T160509_B11_20m.jp2")
 
-
 #Definizione dell'area di interesse con la funzione ext() del pacchetto terra. 
 #Negli argomenti sono indicate le coordinate UTM in questo ordine: xmin, xmax, ymin, ymax
-
 aoi <- ext(754809, 763308, 2946037, 2953282)
 
-
 #Ritaglio dell'area di interesse con la funzione crop() del pacchetto terra
-
 oct18 <- crop(or2018, aoi)
 oct19 <- crop(or2019, aoi)
 oct21 <- crop(or2021, aoi)
 
-
 #Ritaglio della banda 11
-
 oct18b11 <- crop(or2018_b11 , aoi)
 oct19b11 <- crop(or2019_b11 , aoi)
 oct21b11 <- crop(or2021_b11 , aoi)
@@ -84,7 +71,6 @@ plotRGB(oct18, 3, 2, 1, stretch ="lin", main = "RGB 2018") #stretch adatta il ra
 plotRGB(oct19, 3, 2, 1, stretch ="lin", main = "RGB 2019") #in questo caso stretch lineare
 plotRGB(oct21, 3, 2, 1, stretch ="lin", main = "RGB 2021")
 
-
 #Esportazioni immagini in formato png -----------------------------------------
 #png("imgprova.png", width = 800, height = 600, res=100)     # dettagli output 
 #intanto provo con i valori di default
@@ -100,7 +86,6 @@ dev.off()
 
 #Visualizzazione a falsi colori
 #assegno r = NIR(4), g = rosso(3), b = verde(2)
-
 plotRGB(oct18, 4, 3, 2, stretch ="lin", main = "NIR 2018")
 plotRGB(oct19, 4, 3, 2, stretch ="lin", main = "NIR 2019")
 plotRGB(oct21, 4, 3, 2, stretch ="lin", main = "NIR 2021")
@@ -111,7 +96,6 @@ plotRGB(oct21, 4, 3, 2, stretch ="lin", main = "NIR 2021")
 #=============================================
 
 #Calcolo ndvi con funzione im.ndvi() di imageRy
-
 ndvi18 <- im.ndvi(oct18, 4, 3)
 ndvi19 <- im.ndvi(oct19, 4, 3)
 ndvi21 <- im.ndvi(oct21, 4, 3)
@@ -121,11 +105,9 @@ ndvi <- c(ndvi18, ndvi19, ndvi21) #concatenamento in un vettore
 #visualizzazione ndvi con palette viridis
 plot(ndvi, col = viridis(100), nc = 3, range = range(values(ndvi), na.rm = TRUE), main = "NDVI")
 
-
 names(ndvi) <- c("NDVI 2018", "NDVI 2019", "NDVI 2021") #modifica nome oggetti, per definire titoli dei singoli plot
 plot(ndvi, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRUE))
 #definisco il range di valori tra i valori minimo e massimo assoluto, in modo da avere stessa scala di valori tra le 3 immagini
-
 
 #posso fare così e rinominare, oppure
 plot(ndvi18, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2018")
@@ -133,14 +115,10 @@ plot(ndvi19, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRU
 plot(ndvi21, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2021")
 #qui l'unica cosa migliore è che i grafici sono più distanziati e quindi barre e coordinate non sono eccessivamente vicine. BOH?
 
-
 #Ridgeline plot dell'ndvi con im.ridgeline() di imageRy
-
 im.ridgeline(ndvi, scale = 2, palette = "viridis") #scale definisce le dimensioni verticali del plot
 
-
 #Differenze di ndvi tra 2018-2019, 2019-2021, 2018-2021
-
 d_ndvi18_19 <- ndvi[[2]] - ndvi[[1]]
 plot(d_ndvi18_19, col = viridis(100), main = "ΔNDVI 2018-2019")
 
@@ -156,14 +134,11 @@ plot(d_ndvi18_21, col = inferno(100), main = "ΔNDVI 2018 - 2021")
 #===========================================
 
 #Ricampionamento della banda 8 per portarla a risoluzione 20m
-
 oct18b8_20m <- resample(oct18[[4]], oct18b11, method = "average")
 oct19b8_20m <- resample(oct19[[4]], oct19b11, method = "average")
 oct21b8_20m <- resample(oct21[[4]], oct21b11, method = "average")
 
-
 #Calcolo e visualizzazione NDMI
-
 ndmi18 <- (oct18b8_20m - oct18b11)/(oct18b8_20m + oct18b11)
 ndmi19 <- (oct19b8_20m - oct19b11)/(oct19b8_20m + oct19b11)
 ndmi21 <- (oct21b8_20m - oct21b11)/(oct21b8_20m + oct21b11)
@@ -223,7 +198,6 @@ plot(classi, col = palette, nc=3)
 
 
 #Quantificazione della copertura percentuale delle classi
-
 freq_18 <- freq(classi[[1]])  #crea tabella con i pixel di ogni classe nella colonna count
 perc_18 <- freq_18$count * 100 / ncell(classi)   #divide valori di frequenza ($count) per il numero di pixel (ncell)
 
@@ -236,7 +210,6 @@ perc_21 <- freq_21$count * 100 / ncell(classi)
 
 #Creazione tabella con i risultati
 #Arrotondamento a una cifra decimale con round()
-
 tab <- data.frame(
   class= nomi,
   perc18=round(perc_18, 1),
@@ -256,7 +229,6 @@ tab  #visualizzazione della tabella
 
 #ggplot() permette di creare grafici e aggiungere elementi con "+"
 #I valori sono presi dalla tabella tab
-
 p18 <- ggplot(tab, aes(x = class, y = perc18, fill = class)) +      # aes() determina come inserire gli elementi di tab nel grafico
   geom_bar(stat = "identity")  +                                    # crea le barre, stat = "indentity" dice di inserire i valori della tabella
   ylim(0,100) +                                                     # range dell'asse y
