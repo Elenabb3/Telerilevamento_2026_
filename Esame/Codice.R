@@ -132,21 +132,6 @@ plot(ndvi21, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRU
 names(ndvi) =c("NDVI 2018", "NDVI 2019", "NDVI 2021") #Assegna i nomi alle immagini nell'oggetto ndvi
 im.ridgeline(ndvi, scale=2, palette="viridis") #potrei dire qualcosa sulla funzione im.ridgeline?
 
-#-------------------------------------------------------------------
-#LO SCATTERPLOT CHE PERò NON SO NEANCHE IO SE METTERLO
-#pairs(ndvi)                                                                                # creazione matrice scatterplot 
-#plot(ndvi[[1]], ndvi[[2]], xlab="NDVI 2018", ylab="NDVI 2019", main="Scatterplot NDVI")    # scatterplot NDVI pre e post-evento 
-#abline(0, 1, col="red") 
-
-#il fatto che ci sia incluso anche un pezzo di mare sballa i risultati?
-
-#cfr = c(ndvi18, ndvi21)
-#pairs(cfr)                                                                                # creazione matrice scatterplot 
-#plot(cfr[[1]], cfr[[2]], xlab="NDVI 2018", ylab="NDVI 2021", main="Scatterplot NDVI")    # scatterplot NDVI pre e post-evento 
-#abline(0, 1, col="red") 
-#quindi il 2021 ha comunque NDVI più basso, però non in maniera pronunciata come nel primo confronto
-#---------------------------------------------------------------------------------------------------
-
 
 #Differenze di ndvi tra 2018-2019, 2019-2021, 2018-2021
 
@@ -156,7 +141,7 @@ plot(d_ndvi18_19, col = viridis(100), main = "ΔNDVI 2018-2019") #giusto perchè
 d_ndvi19_21 <- ndvi[[3]] - ndvi[[2]]
 plot(d_ndvi19_21, col = inferno(100), main = "ΔNDVI 2019 - 2021")
 #qui dal grafico non si capisce bene perché i valori sono molto vicini allo 0
-#bisognerebbe guardare la distribuzione dei pixel
+#bisognerebbe guardare la distribuzione dei pixel, oppure scatterplot
 
 d_ndvi18_21 <- ndvi[[3]] - ndvi[[1]]
 plot(d_ndvi18_21, col = inferno(100), main = "ΔNDVI 2018 - 2021")
@@ -171,30 +156,24 @@ plot(d_ndvi18_21, col = inferno(100), main = "ΔNDVI 2018 - 2021")
 oct18b8_20m <- resample(oct18[[4]], oct18b11, method = "average")
 oct19b8_20m <- resample(oct19[[4]], oct19b11, method = "average")
 oct21b8_20m <- resample(oct21[[4]], oct21b11, method = "average")
-#b2023b8_20m <- resample(b23_10m[[4]], b2023b11, method = "average")
-
 
 ndmi18 <- (oct18b8_20m - oct18b11)/(oct18b8_20m + oct18b11)
 ndmi19 <- (oct19b8_20m - oct19b11)/(oct19b8_20m + oct19b11)
 ndmi21 <- (oct21b8_20m - oct21b11)/(oct21b8_20m + oct21b11)
-#ndmi23 <- (b2023b8_20m-b2023b11)/(b2023b8_20m+b2023b11)
+
 ndmi <- c(ndmi18, ndmi19, ndmi21)
 plot(ndmi, col = mako(100)) 
-
 
 #differenza di ndmi tra 2018 e 2021
 d_ndmi18_21 <- ndmi[[3]] - ndmi[[1]]
 plot(d_ndmi18_21, col = inferno(100))
 #non capisco come interpretare i segni
 
-
 #lo scatterplot mi conferma che è sostanzialemnte diminuito
 ndmi18_21 <- c(ndmi18, ndmi21)
 pairs(ndmi18_21)                                                                                # creazione matrice scatterplot 
 plot(ndmi18_21[[1]], ndmi18_21[[2]], xlab="NDMI 2018", ylab="NDMI 2021", main="Scatterplot NDVI")    # scatterplot NDVI pre e post-evento 
 abline(0, 1, col="red") 
-
-
 
 #aggiunger ridgeline?
 names(ndmi) <- c("NDMI 2018", "NDMI 2019", "NDMI 2021")
@@ -205,49 +184,14 @@ im.ridgeline(ndmi, scale=2, palette="viridis")
 #però, l'ndmi è influenzato anche dalla copertura no? questo non sballa i risultati?
 
 
-
-
-
-
 #-------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------------------
 #=============================================================================================================
 
 #CLASSIFICAZIONE IN BASE ALL'NDVI
 
-#classificazione non supervisionata
-
-#par(mfrow=c(3,1))
-#im.classify(ndvi18, num_clusters = 4, do_plot = TRUE)
-#im.classify(ndvi19, num_clusters = 4, do_plot = TRUE)
-#im.classify(ndvi21, num_clusters = 4, do_plot = TRUE)
-
-#potrebbe funzionare tbh. Non saprei con quanti cluster però. O forse è meglio se decido io le categorie di ndvi?
-#in quel caso mi serve un criterio secondo cui definirle
-
-
-
-
 #CLASSIFICAZIONE SUPERVISIONATA
-
-#divido così le classi
-#<0.2 -> no veg/acqua. 0.2-0.4 -> veg scarsa e/o stressata. 0.4 - 0.7 -> veg in salute. >0.7 -> veg particolarmente densa/florida
-
-cat <- matrix(c(
-  -Inf, 0.2,  1,
-  0.2, 0.4,  2,
-  0.4, 0.7,  3,
-  0.7, Inf,  4
-), ncol = 3, byrow = TRUE)
-
-ndvi_classi <- classify(ndvi, rcl = cat)
-
-plot(ndvi_classi)
-
-
-
-#altra classificazione
-#< -0.1 -> acqua/nuvole. -0.1/0.2 -> suolo/no veg. 0.2-0.4 -> scarsa/stressata. >0.4 salute
+#< 0.2 -> suolo/no veg. 0.2-0.4 -> scarsa/stressata. >0.4 salute
 
 cat <- matrix(c(
   -Inf, 0.2,  1,
@@ -257,26 +201,25 @@ cat <- matrix(c(
 
 classi <- classify(ndvi, rcl = cat)
 
-palette <- c(
-  "Vegetazione assente o morta" = viridis(3, option = "mako")[1],
-  "Vegetazione scarsa e/o stressata" = viridis(3, option = "mako")[2],
-  "Vegetazione abbondante e/o sana" = viridis(3, option = "mako")[3]
-)
 
+#definisco i nomi delle classi
 nomi <-c("Vegetazione assente o morta", "Veg scarsa e/o stressata", "Veg abbondante e/o sana")
 
-plot(classi, col=palette)
+#creo una palette assegnando ai colori i nomi delle classi, nell'ordine che ho definito con l'oggetto nomi
+palette <- setNames(
+  viridis(3, option = "viridis"),
+  nomi
+)
+
+#mappe con classificazione
+plot(classi, col = palette)
 
 
-#i colori fanno cacare, però la classificazione funziona, direi. 
-#non mi piace molto che classifichi acqua e suolo nella stessa categoria.
-#non avendo mare è un po' meno fastidioso, però è ok se i fiumi figurano come suolo perso?
+
 #potrei anche valutare di mettere 0.3 invece di 0.4 tra le soglie, però non saprei
 
-
-
-
 #PERCENTUALI
+
 
 freq_18 <- freq(classi[[1]])
 perc_18 <- freq_18$count * 100 / ncell(classi)
@@ -288,84 +231,54 @@ freq_21 <- freq(classi[[3]])
 perc_21 <- freq_21$count * 100 / ncell(classi)
 
 
-#metto in una tabella, arrotondando i valori a una cifra decimale
-#data.frame() per creare tabella - funzioni base R
-#round(x, n) per arrotondare - funzioni base R
+
+#metto in una tabella
 
 tab <- data.frame(
-  class=c("No veg", "Vegetazione scarsa/stressata", "Vegetazione abbondante"),
+  class= nomi,
   perc18=round(perc_18, 1),
   perc19=round(perc_19, 1),
   perc21=round(perc_21, 1)
 )
 
-tab
+tab$class <- factor(tab$class, levels = nomi) # per ordinare le classi, che altrimenti sono messe in ordine alfabetico automaticamente
+#non è obbligatorio, però lo faccio perché voglio che nel barplot le colonne siano nell'ordine morta/scarsa/sana. Rendo anche le cateogorie un dato factor, ovvero una categoria
 
-#GRAFICI A BARRE DELLE PERCENTUALI
-
-#da sistemare per bene l'assegnazione dei colori ecc...
+tab  #visualizzazione tabella
 
 
-#colori = c("grey", "yellow", "darkgreen")
-#-> per assegnare i colori del grafico, che però sostituirò con una palette
-#e quindi lì guardare script sandra per come assegnare i colori
+#GRAFICI A BARRE CON PERCENTUALI
 
 
 p18 <- ggplot(tab, aes(x = class, y = perc18, fill = class)) +
-   geom_bar(stat = "identity", position = "dodge")  +         #anche se comunque, se io non metto dodge non cambia proprio nulla
-   ylim(0,100) +
-   scale_fill_viridis(discrete = TRUE, option = "mako") +     #per generare colori discreti da palette viridis
-   labs(title = "2018" , x = "classi", y = "copertura(%)") +
-   theme(legend.position = "none") +                          #toglie la legenda, in teoria, ma in realtà me la plotta comunque WHYYY
-   theme_minimal()
-
-#non va bene che mi mette l'ordine come lo vuole lui. Poi non sono neanhce sicura che tra le mappe e i barplot mi assegni gli stessi colori alle stesse classi
-#ha senso fare come ha fatto la sandra, quindi definire la palette in anticipo in modo da bloccare la corrispondenza con le classi
-
-
-palette <- c(
-  "Vegetazione assente o morta" = viridis(3, option = "mako")[1],
-  "Vegetazione scarsa e/o stressata" = viridis(3, option = "mako")[2],
-  "Vegetazione abbondante e/o sana" = viridis(3, option = "mako")[3]
-)
-
-#però c'è qualcosa che non quadra
-
-
-p18 <- ggplot(tabout, aes(x = class, y = perc18, fill = class)) +
-  geom_bar(stat = "identity") +
+  geom_bar(stat = "identity")  +         
   ylim(0,100) +
-  labs(title = "2018",
-       x = "Classe",
-       y = "Copertura (%)") +
-  scale_fill_manual(values = colori) +
+  scale_fill_manual(values = palette) + 
+  scale_x_discrete(labels = NULL) +
+  labs(title = "2018" , x = NULL, y = "copertura(%)") +
   theme_minimal() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") 
 
-
-p19 <- ggplot(tabout, aes(x = class, y = perc19, fill = class)) +
-  geom_bar(stat = "identity") +
+p19 <- ggplot(tab, aes(x = class, y = perc19, fill = class)) +
+  geom_bar(stat = "identity")  +         
   ylim(0,100) +
-  labs(title = "2019",
-       x = "Classe",
-       y = "Copertura (%)") +
-  scale_fill_manual(values = colori) +
+  scale_fill_manual(values = palette) +  
+  scale_x_discrete(labels = NULL) +
+  labs(title = "2019" , x = NULL, y = "copertura(%)") +
   theme_minimal() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") 
 
-
-p21 <- ggplot(tabout, aes(x = class, y = perc21, fill = class)) +
-  geom_bar(stat = "identity") +
+p21 <- ggplot(tab, aes(x = class, y = perc21, fill = class)) +
+  geom_bar(stat = "identity")  +         #anche se comunque, se io non metto dodge non cambia proprio nulla
   ylim(0,100) +
-  labs(title = "2021",
-       x = "Classe",
-       y = "Copertura (%)") +
-  scale_fill_manual(values = colori) +
-  theme_minimal() +
-  theme(legend.position = "none")
-
+  scale_fill_manual(values = palette) +   #per generare colori discreti da palette viridis
+  scale_x_discrete(labels = NULL) +
+  labs(title = "2021" , x = NULL, y = "copertura(%)", fill = "LEGENDA") +
+  theme_minimal()
+  
 
 p18 + p19 + p21
+
 
 
 
