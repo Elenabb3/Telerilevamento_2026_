@@ -68,7 +68,6 @@ oct21 <- crop(or2021, aoi)
 oct18b11 <- crop(or2018_b11 , aoi)
 oct19b11 <- crop(or2019_b11 , aoi)
 oct21b11 <- crop(or2021_b11 , aoi)
-#b2023b11 <- crop(b2023b11, aoi)
 
 
 #VISUALIZZAZIONE DATI
@@ -78,9 +77,9 @@ oct21b11 <- crop(or2021_b11 , aoi)
 
 #se uso la funzione di terra invece che di imagery il multiframe non mi da problemi
 par(mfrow=c(1,3))  
-plotRGB(oct18, 3, 2, 1, stretch ="lin")
-plotRGB(oct19, 3, 2, 1, stretch ="lin")
-plotRGB(oct21, 3, 2, 1, stretch ="lin")
+plotRGB(oct18, 3, 2, 1, stretch ="lin", main = "RGB 2018")
+plotRGB(oct19, 3, 2, 1, stretch ="lin", main = "RGB 2019")
+plotRGB(oct21, 3, 2, 1, stretch ="lin", main = "RGB 2021")
 
 
 png("imgprova.png", width = 800, height = 600, res=100)     # dettagli output 
@@ -152,18 +151,17 @@ im.ridgeline(ndvi, scale=2, palette="viridis") #potrei dire qualcosa sulla funzi
 #Differenze di ndvi tra 2018-2019, 2019-2021, 2018-2021
 
 d_ndvi18_19 <- ndvi[[2]] - ndvi[[1]]
-plot(d_ndvi18_19, col = viridis(100)) #giusto perchè nel 2019 è più basso qunidi vengono valori negativi
+plot(d_ndvi18_19, col = viridis(100), main = "ΔNDVI 2018-2019") #giusto perchè nel 2019 è più basso qunidi vengono valori negativi
 
 d_ndvi19_21 <- ndvi[[3]] - ndvi[[2]]
-plot(d_ndvi19_21, col = inferno(100))
+plot(d_ndvi19_21, col = inferno(100), main = "ΔNDVI 2019 - 2021")
 #qui dal grafico non si capisce bene perché i valori sono molto vicini allo 0
 #bisognerebbe guardare la distribuzione dei pixel
 
 d_ndvi18_21 <- ndvi[[3]] - ndvi[[1]]
-plot(d_ndvi18_21, col = inferno(100))
+plot(d_ndvi18_21, col = inferno(100), main = "ΔNDVI 2018 - 2021")
 
-#c'è sempre il problema delle scale
-
+#qua non ci interessa mettere la stessa scala perché è più utile guardare i grafici separatamente e poter vedere maggiori sfumature
 
 #----------------------------------------------------
 #NDMI (Normalized Difference Moisture Index)
@@ -258,7 +256,16 @@ cat <- matrix(c(
 ), ncol = 3, byrow = TRUE)
 
 classi <- classify(ndvi, rcl = cat)
-plot(classi, col=c("grey", "yellow", "darkgreen"))
+
+palette <- c(
+  "Vegetazione assente o morta" = viridis(3, option = "mako")[1],
+  "Vegetazione scarsa e/o stressata" = viridis(3, option = "mako")[2],
+  "Vegetazione abbondante e/o sana" = viridis(3, option = "mako")[3]
+)
+
+nomi <-c("Vegetazione assente o morta", "Veg scarsa e/o stressata", "Veg abbondante e/o sana")
+
+plot(classi, col=palette)
 
 
 #i colori fanno cacare, però la classificazione funziona, direi. 
@@ -271,7 +278,6 @@ plot(classi, col=c("grey", "yellow", "darkgreen"))
 
 #PERCENTUALI
 
-
 freq_18 <- freq(classi[[1]])
 perc_18 <- freq_18$count * 100 / ncell(classi)
 
@@ -281,19 +287,16 @@ perc_19 <- freq_19$count * 100 / ncell(classi)
 freq_21 <- freq(classi[[3]])
 perc_21 <- freq_21$count * 100 / ncell(classi)
 
-#arrotondamento a una cifra decimale
-perc_18 <- round(perc_18, 1)
-perc_19 <- round(perc_19, 1)
-perc_21 <- round(perc_21, 1)
 
-
-#metto in una tabella
+#metto in una tabella, arrotondando i valori a una cifra decimale
+#data.frame() per creare tabella - funzioni base R
+#round(x, n) per arrotondare - funzioni base R
 
 tab <- data.frame(
   class=c("No veg", "Vegetazione scarsa/stressata", "Vegetazione abbondante"),
-  perc18=perc_18,
-  perc19=perc_19,
-  perc21=perc_21
+  perc18=round(perc_18, 1),
+  perc19=round(perc_19, 1),
+  perc21=round(perc_21, 1)
 )
 
 tab
@@ -303,20 +306,7 @@ tab
 #da sistemare per bene l'assegnazione dei colori ecc...
 
 
-
-
-#p1 <- ggplot(tabout, aes(x=class, y=perc18, color=class)) +
-  geom_bar(stat="identity", fill="white")
-
-#p2 <- ggplot(tabout, aes(x=class, y=perc19, color=class)) +
-  geom_bar(stat="identity", fill="white")
-
-#p3 <- ggplot(tabout, aes(x=class, y=perc21, color=class)) +
-  geom_bar(stat="identity", fill="white")
-
-
-
-colori = c("grey", "yellow", "darkgreen")
+#colori = c("grey", "yellow", "darkgreen")
 #-> per assegnare i colori del grafico, che però sostituirò con una palette
 #e quindi lì guardare script sandra per come assegnare i colori
 
@@ -329,9 +319,17 @@ p18 <- ggplot(tab, aes(x = class, y = perc18, fill = class)) +
    theme(legend.position = "none") +                          #toglie la legenda, in teoria, ma in realtà me la plotta comunque WHYYY
    theme_minimal()
 
+#non va bene che mi mette l'ordine come lo vuole lui. Poi non sono neanhce sicura che tra le mappe e i barplot mi assegni gli stessi colori alle stesse classi
+#ha senso fare come ha fatto la sandra, quindi definire la palette in anticipo in modo da bloccare la corrispondenza con le classi
 
 
+palette <- c(
+  "Vegetazione assente o morta" = viridis(3, option = "mako")[1],
+  "Vegetazione scarsa e/o stressata" = viridis(3, option = "mako")[2],
+  "Vegetazione abbondante e/o sana" = viridis(3, option = "mako")[3]
+)
 
+#però c'è qualcosa che non quadra
 
 
 p18 <- ggplot(tabout, aes(x = class, y = perc18, fill = class)) +
