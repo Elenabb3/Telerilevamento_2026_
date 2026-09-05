@@ -90,6 +90,18 @@ plotRGB(oct18, 4, 3, 2, stretch ="lin", main = "NIR 2018")
 plotRGB(oct19, 4, 3, 2, stretch ="lin", main = "NIR 2019")
 plotRGB(oct21, 4, 3, 2, stretch ="lin", main = "NIR 2021")
 
+#Esportazione immagine in formato png -----------------------------------------
+
+png("NIR_bahamas.png", width = 800, height = 600, res = 100)
+
+par(mfrow=c(1,3))
+plotRGB(oct18, 4, 3, 2, stretch ="lin", main = "NIR 2018") 
+plotRGB(oct19, 4, 3, 2, stretch ="lin", main = "NIR 2019") 
+plotRGB(oct21, 4, 3, 2, stretch ="lin", main = "NIR 2021")
+
+dev.off() 
+
+#-------------------------------------------------------------------------------
 
 #=============================================
 #NDVI(Normalized Difference Vegetation Index)
@@ -103,39 +115,68 @@ ndvi21 <- im.ndvi(oct21, 4, 3)
 ndvi <- c(ndvi18, ndvi19, ndvi21) #concatenamento in un vettore
 
 #visualizzazione ndvi con palette viridis
-plot(ndvi, col = viridis(100), nc = 3, range = range(values(ndvi), na.rm = TRUE), main = "NDVI")
-
-names(ndvi) <- c("NDVI 2018", "NDVI 2019", "NDVI 2021") #modifica nome oggetti, per definire titoli dei singoli plot
-plot(ndvi, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRUE))
+#Faccio i plot su righe separate perché il posizionamento dei plot è migliore rispetto a quando si plotta il vettore tutto in una volta
+par(mfrow=c(1, 3))
+plot(ndvi18, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2018")
+plot(ndvi19, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2019")
+plot(ndvi21, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2021")
 #definisco il range di valori tra i valori minimo e massimo assoluto, in modo da avere stessa scala di valori tra le 3 immagini
 
-#posso fare così e rinominare, oppure
-plot(ndvi18, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2018")
-plot(ndvi19, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2019")
-plot(ndvi21, col = inferno(100), nc = 3, range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2021")
-#qui l'unica cosa migliore è che i grafici sono più distanziati e quindi barre e coordinate non sono eccessivamente vicine. BOH?
+
+#Esportazione in png -----------------------------------------------------------------------------------
+
+png("NDVI.png", width = 800, height = 600, res = 100)
+
+par(mfrow=c(1, 3))
+plot(ndvi18, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2018")
+plot(ndvi19, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2019")
+plot(ndvi21, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2021")
+dev.off()
+
+#-------------------------------------------------------------------------------------------------------
 
 #Ridgeline plot dell'ndvi con im.ridgeline() di imageRy
-im.ridgeline(ndvi, scale = 2, palette = "viridis") #scale definisce le dimensioni verticali del plot
+r <- im.ridgeline(ndvi, scale = 2, palette = "viridis") +            #posso aggiungere elementi con la sintassi di ggplot
+  xlim(-0.2, 0.75) +                                                 #limitazione dei valori di x per una visualizzazione migliore
+  theme_minimal()+                                                   #tema con sfondo bianco
+  labs(title = "Ridgeline plot dei valori di NDVI" , fill = "NDVI")  #titolo grafico e titolo legenda
+
 
 #Differenze di ndvi tra 2018-2019, 2019-2021, 2018-2021
+
 d_ndvi18_19 <- ndvi[[2]] - ndvi[[1]]
-plot(d_ndvi18_19, col = viridis(100), main = "ΔNDVI 2018-2019")
-
 d_ndvi19_21 <- ndvi[[3]] - ndvi[[2]]
-plot(d_ndvi19_21, col = inferno(100), main = "ΔNDVI 2019 - 2021")
-
 d_ndvi18_21 <- ndvi[[3]] - ndvi[[1]]
+
+#Visualizzazione plot
+par(mfrow = c(1,3))
+plot(d_ndvi18_19, col = inferno(100), main = "ΔNDVI 2018-2019")
+plot(d_ndvi19_21, col = inferno(100), main = "ΔNDVI 2019 - 2021")
 plot(d_ndvi18_21, col = inferno(100), main = "ΔNDVI 2018 - 2021")
 
+
+#Esportazione in png -----------------------------------------------------------------------------------
+
+png("ridgeline_ndvi.png", width = 800, height = 600, res = 100)
+plot(r)
+dev.off()
+
+png("ΔNDVI.png", width = 800, height = 600, res = 100)
+par(mfrow = c(1,3))
+plot(d_ndvi18_19, col = inferno(100), main = "ΔNDVI 2018-2019")
+plot(d_ndvi19_21, col = inferno(100), main = "ΔNDVI 2019 - 2021")
+plot(d_ndvi18_21, col = inferno(100), main = "ΔNDVI 2018 - 2021")
+dev.off()
+
+#--------------------------------------------------------------------------------------------------------
 
 #===========================================
 #NDMI (Normalized Difference Moisture Index)
 #===========================================
 
-#Ricampionamento della banda 8 per portarla a risoluzione 20m
-oct18b8_20m <- resample(oct18[[4]], oct18b11, method = "average")
-oct19b8_20m <- resample(oct19[[4]], oct19b11, method = "average")
+#Ricampionamento della banda 8 per portarla a risoluzione 20m con resample(), di terra
+oct18b8_20m <- resample(oct18[[4]], oct18b11, method = "average")  #argomenti(img da ricampionare, img su cui fare ricampionamento, metodo di ricampionamento)
+oct19b8_20m <- resample(oct19[[4]], oct19b11, method = "average")  #method = "average" fa la media dei pixel che vengono accorpati nel nuovo pixel
 oct21b8_20m <- resample(oct21[[4]], oct21b11, method = "average")
 
 #Calcolo e visualizzazione NDMI
@@ -144,27 +185,60 @@ ndmi19 <- (oct19b8_20m - oct19b11)/(oct19b8_20m + oct19b11)
 ndmi21 <- (oct21b8_20m - oct21b11)/(oct21b8_20m + oct21b11)
 
 ndmi <- c(ndmi18, ndmi19, ndmi21)
-plot(ndmi, col = mako(100)) 
+
+par(mfrow=c(1,3))
+plot(ndmi18, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2018")
+plot(ndmi19, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2019")
+plot(ndmi21, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2021")
+
+dev.off()
 
 #Differenza di ndmi tra 2018 e 2021
 d_ndmi18_21 <- ndmi[[3]] - ndmi[[1]]
-plot(d_ndmi18_21, col = inferno(100))
-#non capisco come interpretare i segni #lo scatterplot mi conferma che è sostanzialemnte diminuito
+plot(d_ndmi18_21, col = inferno(100), main = "ΔNDMI 2018-2021")
+#non capisco come interpretare i segni #lo scatterplot mi conferma che è sostanzialmente diminuito
 
 #Scatterplot per confrontare 2018 e 2021
 ndmi18_21 <- c(ndmi18, ndmi21)
 pairs(ndmi18_21)                                                                                     # creazione matrice scatterplot 
-plot(ndmi18_21[[1]], ndmi18_21[[2]], xlab="NDMI 2018", ylab="NDMI 2021", main="Scatterplot NDVI")    # scatterplot NDVI pre e post-evento 
+plot(ndmi18_21[[1]], ndmi18_21[[2]], xlab="NDMI 2018", ylab="NDMI 2021", main="Scatterplot NDMI")    # scatterplot NDVI pre e post-evento 
 abline(0, 1, col="red")                                                                              # inserisce linea bisettrice?
 
 #Ridgeline plot -> serve?
 names(ndmi) <- c("NDMI 2018", "NDMI 2019", "NDMI 2021")
-im.ridgeline(ndmi, scale=2, palette="viridis")
+im.ridgeline(ndmi, scale = 2, palette = "mako") +
+  xlim(-0.3, 0.4) +                                                 #limitazione dei valori di x per una visualizzazione migliore
+  theme_minimal()+                                                   #tema con sfondo bianco
+  labs(title = "Ridgeline plot dei valori di NDMI" , fill = "NDMI")  #titolo grafico e titolo legenda
 
-#direi che l'area rimane in stress idrico importante anche nel 2021, anche se si riprende rispetto al 23
-#nel post uragano lo stress idrico per la vegetazione è maggiore, anche per quella che si sta riprendendo
-#però, l'ndmi è influenzato anche dalla copertura no? questo non sballa i risultati?
 
+#Esportazione in png -----------------------------------------------------------------------------------
+
+png("NDMI.png", width = 800, height = 600, res = 100)
+par(mfrow=c(1,3))
+plot(ndmi18, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2018")
+plot(ndmi19, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2019")
+plot(ndmi21, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2021")
+dev.off()
+
+png("ΔNDMI 2018-2021.png", width = 800, height = 600, res = 100)
+plot(d_ndmi18_21, col = inferno(100), main = "ΔNDMI 2018-2021")
+dev.off()
+
+png("pairs_NDMI.png", width = 800, height = 600, res = 100)
+pairs(ndmi18_21)
+dev.off()
+
+png("Scatterplot_NDMI.png", width = 800, height = 600, res = 100)
+plot(ndmi18_21[[1]], ndmi18_21[[2]], xlab="NDMI 2018", ylab="NDMI 2021", main="Scatterplot NDMI")    # scatterplot NDVI pre e post-evento 
+abline(0, 1, col="red")
+dev.off()
+
+png("ridgeline_NDMI.png", width = 800, height = 600, res = 100)
+plot(r1)
+dev.off()
+
+#--------------------------------------------------------------------------------------
 
 #=================================
 #CLASSIFICAZIONE IN BASE ALL'NDVI
