@@ -70,10 +70,16 @@ plotRGB(oct18, 3, 2, 1, stretch ="lin", main = "RGB 2018") #stretch adatta il ra
 plotRGB(oct19, 3, 2, 1, stretch ="lin", main = "RGB 2019") #in questo caso stretch lineare
 plotRGB(oct21, 3, 2, 1, stretch ="lin", main = "RGB 2021")
 
+#Visualizzazione a falsi colori
+#assegno r = NIR(4), g = rosso(3), b = verde(2)
+plotRGB(oct18, 4, 3, 2, stretch ="lin", main = "NIR 2018")
+plotRGB(oct19, 4, 3, 2, stretch ="lin", main = "NIR 2019")
+plotRGB(oct21, 4, 3, 2, stretch ="lin", main = "NIR 2021")
+
 #Esportazioni immagini in formato png -----------------------------------------
 #png("imgprova.png", width = 800, height = 600, res=100)     # dettagli output 
 #intanto provo con i valori di default
-png("RGB_bahamas.png")
+png("RGB_bahamas.png", width = 800, height = 400, res = 100) #definizione delle specifiche dell'immagine
     
 par(mfrow=c(1,3))
 plotRGB(oct18, 3, 2, 1, stretch ="lin", main = "RGB 2018") 
@@ -81,17 +87,8 @@ plotRGB(oct19, 3, 2, 1, stretch ="lin", main = "RGB 2019")
 plotRGB(oct21, 3, 2, 1, stretch ="lin", main = "RGB 2021")
 
 dev.off() 
-#-------------------------------------------------------------------------------
 
-#Visualizzazione a falsi colori
-#assegno r = NIR(4), g = rosso(3), b = verde(2)
-plotRGB(oct18, 4, 3, 2, stretch ="lin", main = "NIR 2018")
-plotRGB(oct19, 4, 3, 2, stretch ="lin", main = "NIR 2019")
-plotRGB(oct21, 4, 3, 2, stretch ="lin", main = "NIR 2021")
-
-#Esportazione immagine in formato png -----------------------------------------
-
-png("NIR_bahamas.png", width = 800, height = 600, res = 100)
+png("NIR_bahamas.png", width = 800, height = 400, res = 100)
 
 par(mfrow=c(1,3))
 plotRGB(oct18, 4, 3, 2, stretch ="lin", main = "NIR 2018") 
@@ -121,19 +118,6 @@ plot(ndvi19, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main
 plot(ndvi21, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2021")
 #definisco il range di valori tra i valori minimo e massimo assoluto, in modo da avere stessa scala di valori tra le 3 immagini
 
-
-#Esportazione in png -----------------------------------------------------------------------------------
-
-png("NDVI.png", width = 800, height = 600, res = 100)
-
-par(mfrow=c(1, 3))
-plot(ndvi18, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2018")
-plot(ndvi19, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2019")
-plot(ndvi21, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2021")
-dev.off()
-
-#-------------------------------------------------------------------------------------------------------
-
 #Ridgeline plot dell'ndvi con im.ridgeline() di imageRy
 names(ndvi) <- c("NDVI 2018", "NDVI 2019", "NDVI 2021")
 r <- im.ridgeline(ndvi, scale = 2, palette = "viridis") +            #posso aggiungere elementi con la sintassi di ggplot
@@ -158,11 +142,18 @@ plot(d_ndvi18_21, col = inferno(100), main = "ΔNDVI 2018-2021")
 
 #Esportazione in png -----------------------------------------------------------------------------------
 
+png("NDVI.png", width = 800, height = 400, res = 100)
+par(mfrow=c(1, 3))
+plot(ndvi18, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2018")
+plot(ndvi19, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2019")
+plot(ndvi21, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2021")
+dev.off()
+
 png("ridgeline_ndvi.png", width = 800, height = 600, res = 100)
 plot(r)
 dev.off()
 
-png("ΔNDVI.png", width = 800, height = 600, res = 100)
+png("ΔNDVI.png", width = 800, height = 400, res = 100)
 par(mfrow = c(1,3))
 plot(d_ndvi18_19, col = inferno(100), main = "ΔNDVI 2018-2019")
 plot(d_ndvi19_21, col = inferno(100), main = "ΔNDVI 2019-2021")
@@ -216,7 +207,7 @@ plot(r1)
 
 #Esportazione in png -----------------------------------------------------------------------------------
 
-png("NDMI.png", width = 800, height = 600, res = 100)
+png("NDMI.png", width = 800, height = 400, res = 100)
 par(mfrow=c(1,3))
 plot(ndmi18, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2018")
 plot(ndmi19, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2019")
@@ -347,7 +338,7 @@ p18 + p19 + p21
 
 #Esportazione in png -----------------------------------------------------------------
 
-png("plot_classi.png", width = 800, height = 600, res = 100)
+png("plot_classi.png", width = 800, height = 400, res = 100)
 par(mfrow=c(1,3))
 plot(classi[[1]], col = palette, main = "2018")
 plot(classi[[2]], col = palette, main = "2019")
