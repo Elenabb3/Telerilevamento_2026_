@@ -1,5 +1,5 @@
 #=======================
-#RICHIAMO DEI PACCHETTI
+# RICHIAMO DEI PACCHETTI
 #=======================
 
 library(terra)      # Visualizzazione e manipolazione di raster spaziali
@@ -9,14 +9,14 @@ library(ggplot2)    # Creazione di barplot
 library(patchwork)  # Visualizzazione e affiancamento di grafici
 
 #====================================
-#IMPORTAZIONE E PREPARAZIONE IMMAGINI
+# IMPORTAZIONE E PREPARAZIONE IMMAGINI
 #===================================
 
 #Definizione della working directory
 setwd("C:/Users/elena/Desktop/Telesame")
 
-#Importazione delle delle bande di Sentinel-2
-#con rast(), pacchetto terra, crea oggetti SpatRaster
+# Importazione delle delle bande di Sentinel-2
+# con rast(), pacchetto terra, crea oggetti SpatRaster
 or2018_b2 <- rast("T17RQK_20181030T155529_B02_10m.jp2")  
 or2018_b3 <- rast("T17RQK_20181030T155529_B03_10m.jp2")
 or2018_b4 <- rast("T17RQK_20181030T155529_B04_10m.jp2")
@@ -32,98 +32,92 @@ or2021_b3 <- rast("T17RQK_20211027T160509_B03_10m.jp2")
 or2021_b4 <- rast("T17RQK_20211027T160509_B04_10m.jp2")
 or2021_b8 <- rast("T17RQK_20211027T160509_B08_10m.jp2")
 
-#Concatenamento delle bande in vettori
+# Concatenamento delle bande in vettori
 or2018 <- c(or2018_b2, or2018_b3, or2018_b4, or2018_b8)
 or2019 <- c(or2019_b2, or2019_b3, or2019_b4, or2019_b8)
 or2021 <- c(or2021_b2, or2021_b3, or2021_b4, or2021_b8)
 
-#Importazione della banda 11 a risoluzione 20m, servirà più tardi per calcolare l'NDMI
+# Importazione della banda 11 a risoluzione 20m, servirà più tardi per calcolare l'NDMI
 or2018_b11 <- rast("T17RQK_20181030T155529_B11_20m.jp2")
 or2019_b11 <- rast("T17RQK_20191003T160511_B11_20m.jp2")
 or2021_b11 <- rast("T17RQK_20211027T160509_B11_20m.jp2")
 
-#Definizione dell'area di interesse con la funzione ext() del pacchetto terra. 
-#Negli argomenti sono indicate le coordinate UTM in questo ordine: xmin, xmax, ymin, ymax
+# Definizione dell'area di interesse con la funzione ext() del pacchetto terra. 
+# Negli argomenti sono indicate le coordinate UTM in questo ordine: xmin, xmax, ymin, ymax
 aoi <- ext(754809, 763308, 2946037, 2953282)
 
-#Ritaglio dell'area di interesse con la funzione crop() del pacchetto terra
+# Ritaglio dell'area di interesse con la funzione crop() del pacchetto terra
 oct18 <- crop(or2018, aoi)
 oct19 <- crop(or2019, aoi)
 oct21 <- crop(or2021, aoi)
 
-#Ritaglio della banda 11
+# Ritaglio della banda 11
 oct18b11 <- crop(or2018_b11 , aoi)
 oct19b11 <- crop(or2019_b11 , aoi)
 oct21b11 <- crop(or2021_b11 , aoi)
 
 
 #====================
-#VISUALIZZAZIONE DATI
+# VISUALIZZAZIONE DATI
 #====================
 
-#Vsualizzazione a colori naturali con plotRGB() di terra 
-#assegno r = rosso(3), g = verde(2), b = blu(1)
+# Visualizzazione a colori naturali con plotRGB() di terra 
+# assegno r = rosso(3), g = verde(2), b = blu(1)
 
-### va bene stretch lineare o è meglio hist? im.plotRGB che tipo di stretch fa in automatico?
-par(mfrow=c(1,3))  #divisione del pannello in 3 colonne
-plotRGB(oct18, 3, 2, 1, stretch ="lin", main = "RGB 2018") #stretch adatta il range di valori originale a quello consentito dalla visualizzazione
-plotRGB(oct19, 3, 2, 1, stretch ="lin", main = "RGB 2019") #in questo caso stretch lineare
-plotRGB(oct21, 3, 2, 1, stretch ="lin", main = "RGB 2021")
+par(mfrow = c(1,3))     #divisione del pannello in 3 colonne
+plotRGB(oct18, 3, 2, 1, stretch = "lin", main = "RGB 2018") 
+plotRGB(oct19, 3, 2, 1, stretch = "lin", main = "RGB 2019")
+plotRGB(oct21, 3, 2, 1, stretch = "lin", main = "RGB 2021")
 
-#Visualizzazione a falsi colori
-#assegno r = NIR(4), g = rosso(3), b = verde(2)
-plotRGB(oct18, 4, 3, 2, stretch ="lin", main = "NIR 2018")
-plotRGB(oct19, 4, 3, 2, stretch ="lin", main = "NIR 2019")
-plotRGB(oct21, 4, 3, 2, stretch ="lin", main = "NIR 2021")
 
-#Esportazioni immagini in formato png -----------------------------------------
-#png("imgprova.png", width = 800, height = 600, res=100)     # dettagli output 
-#intanto provo con i valori di default
-png("RGB_bahamas.png", width = 800, height = 400, res = 100) #definizione delle specifiche dell'immagine
-    
-par(mfrow=c(1,3))
-plotRGB(oct18, 3, 2, 1, stretch ="lin", main = "RGB 2018") 
-plotRGB(oct19, 3, 2, 1, stretch ="lin", main = "RGB 2019") 
-plotRGB(oct21, 3, 2, 1, stretch ="lin", main = "RGB 2021")
+# Visualizzazione a falsi colori
+# assegno r = NIR(4), g = rosso(3), b = verde(2)
+plotRGB(oct18, 4, 3, 2, stretch = "lin", main = "NIR 2018")
+plotRGB(oct19, 4, 3, 2, stretch = "lin", main = "NIR 2019")
+plotRGB(oct21, 4, 3, 2, stretch = "lin", main = "NIR 2021")
 
+# Esportazione immagini in formato png -----------------------------------------
+
+png("RGB_bahamas.png", width = 800, height = 400, res = 100)    # definizione nome e dimensioni immagine    
+par(mfrow = c(1,3))
+plotRGB(oct18, 3, 2, 1, stretch = "lin", main = "RGB 2018") 
+plotRGB(oct19, 3, 2, 1, stretch = "lin", main = "RGB 2019") 
+plotRGB(oct21, 3, 2, 1, stretch = "lin", main = "RGB 2021")
 dev.off() 
 
-png("NIR_bahamas.png", width = 800, height = 400, res = 100)
-
+png("NIR_bahamas.png", width = 800, height = 400, res = 100)    # definizione nome e dimensioni immagine   
 par(mfrow=c(1,3))
-plotRGB(oct18, 4, 3, 2, stretch ="lin", main = "NIR 2018") 
-plotRGB(oct19, 4, 3, 2, stretch ="lin", main = "NIR 2019") 
-plotRGB(oct21, 4, 3, 2, stretch ="lin", main = "NIR 2021")
-
+plotRGB(oct18, 4, 3, 2, stretch = "lin", main = "NIR 2018") 
+plotRGB(oct19, 4, 3, 2, stretch = "lin", main = "NIR 2019") 
+plotRGB(oct21, 4, 3, 2, stretch = "lin", main = "NIR 2021")
 dev.off() 
 
 #-------------------------------------------------------------------------------
 
 #=============================================
-#NDVI(Normalized Difference Vegetation Index)
+# NDVI(Normalized Difference Vegetation Index)
 #=============================================
 
-#Calcolo ndvi con funzione im.ndvi() di imageRy
+# Calcolo ndvi con funzione im.ndvi() di imageRy
 ndvi18 <- im.ndvi(oct18, 4, 3)
 ndvi19 <- im.ndvi(oct19, 4, 3)
 ndvi21 <- im.ndvi(oct21, 4, 3)
 
-ndvi <- c(ndvi18, ndvi19, ndvi21) #concatenamento in un vettore
+ndvi <- c(ndvi18, ndvi19, ndvi21) # concatenamento in un vettore
 
-#visualizzazione ndvi con palette viridis
-#Faccio i plot su righe separate perché il posizionamento dei plot è migliore rispetto a quando si plotta il vettore tutto in una volta
+# Visualizzazione ndvi con palette viridis
 par(mfrow=c(1, 3))
 plot(ndvi18, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2018")
 plot(ndvi19, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2019")
 plot(ndvi21, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2021")
-#definisco il range di valori tra i valori minimo e massimo assoluto, in modo da avere stessa scala di valori tra le 3 immagini
+# Definisco il range di valori tra i valori minimo e massimo assoluto, in modo da avere stessa scala di valori tra le 3 immagini
 
-#Ridgeline plot dell'ndvi con im.ridgeline() di imageRy
-names(ndvi) <- c("NDVI 2018", "NDVI 2019", "NDVI 2021")
-r <- im.ridgeline(ndvi, scale = 2, palette = "viridis") +            #posso aggiungere elementi con la sintassi di ggplot
-  xlim(0, 0.75) +                                                 #limitazione dei valori di x per una visualizzazione migliore
-  theme_minimal()+                                                   #tema con sfondo bianco
-  labs(title = "Ridgeline plot dei valori di NDVI" , fill = "NDVI")  #titolo grafico e titolo legenda
+# Ridgeline plot dell'ndvi con im.ridgeline() di imageRy
+names(ndvi) <- c("NDVI 2018", "NDVI 2019", "NDVI 2021")              # Assegnazione nomi elementi  
+r <- im.ridgeline(ndvi, scale = 2, palette = "viridis") +            # Aggiunta di elementi dopo + con la sintassi di ggplot
+  xlim(0, 0.75) +                                                    # Restringimento dei valori di x per una visualizzazione migliore
+  theme_minimal()+                                                   # Tema minimal con sfondo bianco
+  labs(title = "Ridgeline plot dei valori di NDVI" , fill = "NDVI")  # Titolo grafico e titolo legenda
 
 plot(r)
 
@@ -166,24 +160,35 @@ dev.off()
 #NDMI (Normalized Difference Moisture Index)
 #===========================================
 
-#Ricampionamento della banda 8 per portarla a risoluzione 20m con resample(), di terra
-oct18b8_20m <- resample(oct18[[4]], oct18b11, method = "average")  #argomenti(img da ricampionare, img su cui fare ricampionamento, metodo di ricampionamento)
-oct19b8_20m <- resample(oct19[[4]], oct19b11, method = "average")  #method = "average" fa la media dei pixel che vengono accorpati nel nuovo pixel
+# Ricampionamento della banda 8 per portarla a risoluzione 20m con resample(), di terra
+# method = "average" fa la media dei pixel che vengono accorpati nel nuovo pixel
+oct18b8_20m <- resample(oct18[[4]], oct18b11, method = "average")  # argomenti(img da ricampionare, img su cui fare ricampionamento, metodo di ricampionamento)
+oct19b8_20m <- resample(oct19[[4]], oct19b11, method = "average")  
 oct21b8_20m <- resample(oct21[[4]], oct21b11, method = "average")
 
-#Calcolo e visualizzazione NDMI
+# Calcolo NDMI
 ndmi18 <- (oct18b8_20m - oct18b11)/(oct18b8_20m + oct18b11)
 ndmi19 <- (oct19b8_20m - oct19b11)/(oct19b8_20m + oct19b11)
 ndmi21 <- (oct21b8_20m - oct21b11)/(oct21b8_20m + oct21b11)
 
 ndmi <- c(ndmi18, ndmi19, ndmi21)
 
+# Visualizzazione
 par(mfrow=c(1,3))
 plot(ndmi18, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2018")
 plot(ndmi19, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2019")
 plot(ndmi21, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2021")
 
 dev.off()
+
+# Ridgeline plot
+names(ndmi) <- c("NDMI 2018", "NDMI 2019", "NDMI 2021")
+r1 <- im.ridgeline(ndmi, scale = 2, palette = "mako") +
+  xlim(-0.3, 0.4) +                                                  # limitazione dei valori di x per una visualizzazione migliore
+  theme_minimal()+                                                   # tema con sfondo bianco
+  labs(title = "Ridgeline plot dei valori di NDMI" , fill = "NDMI")  # titolo grafico e titolo legenda
+
+plot(r1)
 
 #Differenza di ndmi tra 2018 e 2021
 d_ndmi18_21 <- ndmi[[3]] - ndmi[[1]]
@@ -196,14 +201,7 @@ pairs(ndmi18_21)                                                                
 plot(ndmi18_21[[1]], ndmi18_21[[2]], xlab="NDMI 2018", ylab="NDMI 2021", main="Scatterplot NDMI")    # scatterplot NDVI pre e post-evento 
 abline(0, 1, col="red")                                                                              # inserisce linea bisettrice?
 
-#Ridgeline plot -> serve?
-names(ndmi) <- c("NDMI 2018", "NDMI 2019", "NDMI 2021")
-r1 <- im.ridgeline(ndmi, scale = 2, palette = "mako") +
-  xlim(-0.3, 0.4) +                                                 #limitazione dei valori di x per una visualizzazione migliore
-  theme_minimal()+                                                   #tema con sfondo bianco
-  labs(title = "Ridgeline plot dei valori di NDMI" , fill = "NDMI")  #titolo grafico e titolo legenda
 
-plot(r1)
 
 #Esportazione in png -----------------------------------------------------------------------------------
 
