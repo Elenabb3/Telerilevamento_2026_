@@ -6,7 +6,6 @@ library(terra)      # Visualizzazione e manipolazione di raster spaziali
 library(imageRy)    # Calcolo dell'ndvi, creazione ridgeline plots
 library(viridis)    # Palette chiare e adatte per il daltonismo
 library(ggplot2)    # Creazione di barplot
-library(ggridges)   # Creazione di ridgeline plots - ma ho usato la funzione di imagery, serve comunque?
 library(patchwork)  # Visualizzazione e affiancamento di grafici
 
 #====================================
@@ -136,11 +135,13 @@ dev.off()
 #-------------------------------------------------------------------------------------------------------
 
 #Ridgeline plot dell'ndvi con im.ridgeline() di imageRy
+names(ndvi) <- c("NDVI 2018", "NDVI 2019", "NDVI 2021")
 r <- im.ridgeline(ndvi, scale = 2, palette = "viridis") +            #posso aggiungere elementi con la sintassi di ggplot
-  xlim(-0.2, 0.75) +                                                 #limitazione dei valori di x per una visualizzazione migliore
+  xlim(0, 0.75) +                                                 #limitazione dei valori di x per una visualizzazione migliore
   theme_minimal()+                                                   #tema con sfondo bianco
   labs(title = "Ridgeline plot dei valori di NDVI" , fill = "NDVI")  #titolo grafico e titolo legenda
 
+plot(r)
 
 #Differenze di ndvi tra 2018-2019, 2019-2021, 2018-2021
 
@@ -151,8 +152,8 @@ d_ndvi18_21 <- ndvi[[3]] - ndvi[[1]]
 #Visualizzazione plot
 par(mfrow = c(1,3))
 plot(d_ndvi18_19, col = inferno(100), main = "ΔNDVI 2018-2019")
-plot(d_ndvi19_21, col = inferno(100), main = "ΔNDVI 2019 - 2021")
-plot(d_ndvi18_21, col = inferno(100), main = "ΔNDVI 2018 - 2021")
+plot(d_ndvi19_21, col = inferno(100), main = "ΔNDVI 2019-2021")
+plot(d_ndvi18_21, col = inferno(100), main = "ΔNDVI 2018-2021")
 
 
 #Esportazione in png -----------------------------------------------------------------------------------
@@ -164,8 +165,8 @@ dev.off()
 png("ΔNDVI.png", width = 800, height = 600, res = 100)
 par(mfrow = c(1,3))
 plot(d_ndvi18_19, col = inferno(100), main = "ΔNDVI 2018-2019")
-plot(d_ndvi19_21, col = inferno(100), main = "ΔNDVI 2019 - 2021")
-plot(d_ndvi18_21, col = inferno(100), main = "ΔNDVI 2018 - 2021")
+plot(d_ndvi19_21, col = inferno(100), main = "ΔNDVI 2019-2021")
+plot(d_ndvi18_21, col = inferno(100), main = "ΔNDVI 2018-2021")
 dev.off()
 
 #--------------------------------------------------------------------------------------------------------
@@ -206,11 +207,12 @@ abline(0, 1, col="red")                                                         
 
 #Ridgeline plot -> serve?
 names(ndmi) <- c("NDMI 2018", "NDMI 2019", "NDMI 2021")
-im.ridgeline(ndmi, scale = 2, palette = "mako") +
+r1 <- im.ridgeline(ndmi, scale = 2, palette = "mako") +
   xlim(-0.3, 0.4) +                                                 #limitazione dei valori di x per una visualizzazione migliore
   theme_minimal()+                                                   #tema con sfondo bianco
   labs(title = "Ridgeline plot dei valori di NDMI" , fill = "NDMI")  #titolo grafico e titolo legenda
 
+plot(r1)
 
 #Esportazione in png -----------------------------------------------------------------------------------
 
@@ -268,8 +270,17 @@ palette <- setNames(
 )
 
 #Mappe della classificazione
-plot(classi, col = palette, nc=3)
+par(mfrow=c(1,3))
+plot(classi[[1]], col = palette, main = "2018")
+plot(classi[[2]], col = palette, main = "2019")
+plot(classi[[3]], col = palette, main = "2021")
 
+legend(
+  "top",
+  legend = nomi,
+  fill = palette,
+  xpd = TRUE
+)
 
 #Quantificazione della copertura percentuale delle classi
 freq_18 <- freq(classi[[1]])  #crea tabella con i pixel di ogni classe nella colonna count
@@ -334,8 +345,29 @@ p21 <- ggplot(tab, aes(x = class, y = perc21, fill = class)) +
 # Visualizzazione dei 3 grafici affiancati grazie a pacchetto patchwork
 p18 + p19 + p21
 
+#Esportazione in png -----------------------------------------------------------------
+
+png("plot_classi.png", width = 800, height = 600, res = 100)
+par(mfrow=c(1,3))
+plot(classi[[1]], col = palette, main = "2018")
+plot(classi[[2]], col = palette, main = "2019")
+plot(classi[[3]], col = palette, main = "2021")
+
+legend(
+  "top",
+  legend = nomi,
+  fill = palette,
+  xpd = TRUE
+)
+
+dev.off()    #molto brutto che nel png posiziona la legenda così lontana
 
 
+png("barplot.png", width = 1000, height = 600, res = 100)
+p18 + p19 + p21
+dev.off()
+
+#------------------------------------------------------------------------------------------------
 
 #https://ebird.org/species/bnhnut2?continue
 #https://shelterboxcanada.org/where-we-work/bahamas/hurricane-dorian/
