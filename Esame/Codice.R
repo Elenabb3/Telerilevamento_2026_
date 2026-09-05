@@ -4,7 +4,7 @@
 
 library(terra)      # Visualizzazione e manipolazione di raster spaziali
 library(imageRy)    # Calcolo dell'ndvi, creazione ridgeline plots
-library(viridis)    # Palette chiare e adatte per il daltonismo
+library(viridis)    # Palette ad alto contrasto e adatte per il daltonismo
 library(ggplot2)    # Creazione di barplot
 library(patchwork)  # Visualizzazione e affiancamento di grafici
 
@@ -114,7 +114,7 @@ plot(ndvi21, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main
 
 # Ridgeline plot dell'ndvi con im.ridgeline() di imageRy
 names(ndvi) <- c("NDVI 2018", "NDVI 2019", "NDVI 2021")              # Assegnazione nomi elementi  
-r <- im.ridgeline(ndvi, scale = 2, palette = "viridis") +            # Aggiunta di elementi dopo + con la sintassi di ggplot
+r <- im.ridgeline(ndvi, scale = 1, palette = "viridis") +            # Aggiunta di elementi dopo + con la sintassi di ggplot
   xlim(0, 0.75) +                                                    # Restringimento dei valori di x per una visualizzazione migliore
   theme_minimal()+                                                   # Tema minimal con sfondo bianco
   labs(title = "Ridgeline plot dei valori di NDVI" , fill = "NDVI")  # Titolo grafico e titolo legenda
@@ -183,24 +183,22 @@ dev.off()
 
 # Ridgeline plot
 names(ndmi) <- c("NDMI 2018", "NDMI 2019", "NDMI 2021")
-r1 <- im.ridgeline(ndmi, scale = 2, palette = "mako") +
+r1 <- im.ridgeline(ndmi, scale = 1, palette = "mako") +
   xlim(-0.3, 0.4) +                                                  # limitazione dei valori di x per una visualizzazione migliore
   theme_minimal()+                                                   # tema con sfondo bianco
   labs(title = "Ridgeline plot dei valori di NDMI" , fill = "NDMI")  # titolo grafico e titolo legenda
 
 plot(r1)
 
-#Differenza di ndmi tra 2018 e 2021
+#Differenza di ndmi
+d_ndmi18_19 <- ndmi[[2]] - ndmi[[1]]
+d_ndmi18_21 <- ndmi[[3]] - ndmi[[2]]
 d_ndmi18_21 <- ndmi[[3]] - ndmi[[1]]
+
+par(mfrow = c(1,3))
+plot(d_ndmi18_19, col = inferno(100), main = "ΔNDMI 2018-2019")
+plot(d_ndmi19_21, col = inferno(100), main = "ΔNDMI 2019-2021")
 plot(d_ndmi18_21, col = inferno(100), main = "ΔNDMI 2018-2021")
-#non capisco come interpretare i segni #lo scatterplot mi conferma che è sostanzialmente diminuito
-
-#Scatterplot per confrontare 2018 e 2021
-ndmi18_21 <- c(ndmi18, ndmi21)
-pairs(ndmi18_21)                                                                                     # creazione matrice scatterplot 
-plot(ndmi18_21[[1]], ndmi18_21[[2]], xlab="NDMI 2018", ylab="NDMI 2021", main="Scatterplot NDMI")    # scatterplot NDVI pre e post-evento 
-abline(0, 1, col="red")                                                                              # inserisce linea bisettrice?
-
 
 
 #Esportazione in png -----------------------------------------------------------------------------------
@@ -212,21 +210,15 @@ plot(ndmi19, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "N
 plot(ndmi21, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2021")
 dev.off()
 
-png("ΔNDMI 2018-2021.png", width = 800, height = 600, res = 100)
-plot(d_ndmi18_21, col = inferno(100), main = "ΔNDMI 2018-2021")
-dev.off()
-
-png("pairs_NDMI.png", width = 800, height = 600, res = 100)
-pairs(ndmi18_21)
-dev.off()
-
-png("Scatterplot_NDMI.png", width = 800, height = 600, res = 100)
-plot(ndmi18_21[[1]], ndmi18_21[[2]], xlab="NDMI 2018", ylab="NDMI 2021", main="Scatterplot NDMI")    # scatterplot NDVI pre e post-evento 
-abline(0, 1, col="red")
-dev.off()
-
 png("ridgeline_NDMI.png", width = 800, height = 600, res = 100)
 plot(r1)
+dev.off()
+
+png("ΔNDMI.png", width = 800, height = 400, res = 100)
+par(mfrow = c(1,3))
+plot(d_ndmi18_19, col = inferno(100), main = "ΔNDMI 2018-2019")
+plot(d_ndmi19_21, col = inferno(100), main = "ΔNDMI 2019-2021")
+plot(d_ndmi18_21, col = inferno(100), main = "ΔNDMI 2018-2021")
 dev.off()
 
 #--------------------------------------------------------------------------------------
