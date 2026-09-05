@@ -315,6 +315,15 @@ plot(d_ndmi18_21, col = inferno(100), main = "ΔNDMI 2018-2021")
 <p align="center">
 <img width="400" height="300" alt="ΔNDMI 2018-2021" src="https://github.com/user-attachments/assets/2012e60f-990f-4938-a846-92cbdc550353" />
 
+COMMENTO
+
+## Scatterplot
+
+in pratica mi fa vedere in base a se la nuvola di punti è sopra o sotto la linea se c'è stata una generale diminuzione tra i due anni.
+Utile perché magari dalle mappe e basta è più difficile da capire
+Però alla fine lo potevo vedere anche dal ridgeline quindi forse è inutile metterli entrambi?
+
+
 <p align="center">
 <img width="400" height="300" alt="pairs_NDMI" src="https://github.com/user-attachments/assets/2be40679-c797-4901-af8e-529a27a32c0a" />
 
@@ -327,39 +336,120 @@ plot(d_ndmi18_21, col = inferno(100), main = "ΔNDMI 2018-2021")
 
 È stata applicata una classificazione per categorizzare i valori di NDVI in classi e analizzarne l'evoluzione nel tempo. La classificazione non è automatica, e sono state fornite le seguenti classi di riferimento.
 
-TABELLA TABELLA TABELLA
+TABELLA TABELLA TABELLA da aggiungere
 
+Creazione della matrice con le categorie
+```r
+cat <- matrix(c(
+  -Inf, 0.2,  1,
+  0.2, 0.4,  2,
+  0.4, Inf,  3
+), ncol = 3, byrow = TRUE)
+```
+
+Classificazione dei dati in base alla matrice
 
 ```r
+classi <- classify(ndvi, rcl = cat)
 
-MANCA
+#Assegnazione dei nomi delle classi
+nomi <-c("Vegetazione assente o morta", "Veg scarsa e/o stressata", "Veg abbondante e/o sana")
 
+#Creazione di una palette + assegnazione dei colori i nomi delle classi, nell'ordine che ho definito con l'oggetto nomi
+#funzione setNames() da stats (core package di R)
+palette <- setNames(
+  viridis(3, option = "viridis"),
+  nomi
+)
+```
+Visualizzazione delle mappe classificate
+
+```r
+par(mfrow=c(1,3))
+plot(classi[[1]], col = palette, main = "2018")
+plot(classi[[2]], col = palette, main = "2019")
+plot(classi[[3]], col = palette, main = "2021")
+
+legend(                    # Aggiungta della legenda
+  "top",
+  legend = nomi,
+  fill = palette,
+  xpd = TRUE
+)
 ```
 
 <p align="center">
 <img width="800" height="400" alt="plot_classi" src="https://github.com/user-attachments/assets/7ef5331c-cd41-4eb8-810c-8aab72161b0d" />
 
+COMMENTO 
 
 ## Analisi quantitativa delle classi
 
-Sono state calcolate le percentuali di copertura delle classi per ogni anno preso in esame.
+Sono state calcolate le percentuali di copertura delle classi per ogni anno preso in esame, e i valori sono poi stati inseriti in una tabella
 
 ```r
+freq_18 <- freq(classi[[1]])  #crea tabella con i pixel di ogni classe nella colonna count
+perc_18 <- freq_18$count * 100 / ncell(classi)   #divide valori di frequenza ($count) per il numero di pixel (ncell)
 
-MANCA
+freq_19 <- freq(classi[[2]])
+perc_19 <- freq_19$count * 100 / ncell(classi)
 
+freq_21 <- freq(classi[[3]])
+perc_21 <- freq_21$count * 100 / ncell(classi)
+
+#Creazione tabella con i risultati
+#Arrotondamento a una cifra decimale con round()
+tab <- data.frame(
+  class= nomi,
+  perc18=round(perc_18, 1),
+  perc19=round(perc_19, 1),
+  perc21=round(perc_21, 1)
+)
+
+tab$class <- factor(tab$class, levels = nomi) #ordina le classi secondo il vettore nomi, altrimenti vengono automaticamente messe in ordine alfabetic
+##non è obbligatorio, però lo faccio perché voglio che nel barplot le colonne siano nell'ordine morta/scarsa/sana. Rendo anche le cateogorie un dato factor, ovvero una categoria
+tab  #visualizzazione della tabella
 ```
 
-I risultati sono riportati in questa tabella.
+I risultati sono qui riportati.
 
 TABELLA TABELLA
 
 Infine, sono stati creati dei barplot per visualizzare le variazioni delle percentuali
 
 ```r
+#ggplot() permette di creare grafici e aggiungere elementi con "+"
+#I valori sono presi dalla tabella tab
+p18 <- ggplot(tab, aes(x = class, y = perc18, fill = class)) +      # aes() determina come inserire gli elementi di tab nel grafico
+  geom_bar(stat = "identity")  +                                    # crea le barre, stat = "indentity" dice di inserire i valori della tabella
+  ylim(0,100) +                                                     # range dell'asse y
+  scale_fill_manual(values = palette) +                             # assegna colori da una palette creata manualmente
+  scale_x_discrete(labels = NULL) +                                 # toglie i nomi delle classi dall'asse x
+  labs(title = "2018" , x = NULL, y = "copertura(%)") +             # definizione titolo e nomi degli assi. NULL permette di togliere il nome dell'asse x
+  theme_minimal() +                                                 # tema minimal alle grafiche. Sfondo bianco rispetto a quello grigio di default
+  theme(legend.position = "none")                                   # elimina la legenda
 
-MANCA
+# Stessa struttura per creare gli altri grafici
+p19 <- ggplot(tab, aes(x = class, y = perc19, fill = class)) +
+  geom_bar(stat = "identity")  +         
+  ylim(0,100) +
+  scale_fill_manual(values = palette) +  
+  scale_x_discrete(labels = NULL) +
+  labs(title = "2019" , x = NULL, y = "copertura(%)") +
+  theme_minimal() +
+  theme(legend.position = "none")
 
+p21 <- ggplot(tab, aes(x = class, y = perc21, fill = class)) +
+  geom_bar(stat = "identity")  +        
+  ylim(0,100) +
+  scale_fill_manual(values = palette) +  
+  scale_x_discrete(labels = NULL) +
+  labs(title = "2021" , x = NULL, y = "copertura(%)", fill = "LEGENDA") +  # fill definisce il titolo della legenda
+  theme_minimal()
+  # Solo questo grafico contiene la legenda, visto che i 3 plot verranno visualizzati assieme
+
+# Visualizzazione dei 3 grafici affiancati grazie a pacchetto patchwork
+p18 + p19 + p21
 ```
 
 <p align="center">
