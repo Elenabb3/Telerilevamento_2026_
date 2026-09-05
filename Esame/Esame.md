@@ -1,4 +1,4 @@
-# ANALISI DELL'IMPATTO DELL'URAGANO DORIAN SULLA VEGETAZIONE DI GRAND BAHAMA
+# Analisi dell'impatto dell'uragano Dorian sulla vegetazione di Grand Bahama
 
 > #### Corso di Telerilevamento Geo-Ecologico in R, a.a. 2025-26
 > #### Elena Betti
@@ -94,7 +94,10 @@ Non so se mettere anche la visualizzazione delle singole bande
 MANCA
 
 ```
-IMMAGINE e COMMENTO
+<p align="center">
+<img width="800" height="400" alt="RGB_bahamas" src="https://github.com/user-attachments/assets/a176e3db-2bd1-46f2-b322-965b9db2ad8f" />
+
+COMMENTO
 
 
 ## Falsi colori (NIR - rosso - verde)
@@ -104,10 +107,14 @@ IMMAGINE e COMMENTO
 MANCA
 
 ```
-IMMAGINE E COMMENTO
+
+<p align="center">
+<img width="800" height="400" alt="NIR_bahamas" src="https://github.com/user-attachments/assets/08ca8c4d-a3d0-4f05-86c2-462972dd040c" />
+  
+COMMENTO
 
 
-## Sezione sul download delle immagini che palle
+## Esportazione delle immagini
 
 
 # NDVI (Normalized Difference Vegetation Index)
@@ -124,7 +131,11 @@ Valori di NDVI sotto allo 0.2 sono associati ad assenza di vegetazione (suolo, a
 MANCA
 
 ```
-IMMAGINE E COMMENTO
+
+<p align="center">
+<img width="800" height="400" alt="NDVI" src="https://github.com/user-attachments/assets/e840e3f2-a1b3-404c-a30f-28d89c207441" />
+
+COMMENTO
 
 Creazione di un ridgeline pront per confrontare la distribuzione dei valori di NDVI nelle 3 immagini
 
@@ -133,7 +144,11 @@ Creazione di un ridgeline pront per confrontare la distribuzione dei valori di N
 MANCA
 
 ```
-IMMAGINE E COMMENTO
+
+<p align="center">
+<img width="400" height="300" alt="ridgeline_ndvi" src="https://github.com/user-attachments/assets/4aee81fb-1be2-4e2c-b419-c81a598a3f98" />
+
+COMMENTO
 
 
 ## Variazione di NDVi 
@@ -145,7 +160,11 @@ Il calcolo della differenza di NDVI tra gli anni permette di visualizzare la var
 MANCA
 
 ```
-IMMAGINE E COMMENTO
+<p align="center">
+<img width="800" height="400" alt="ΔNDVI" src="https://github.com/user-attachments/assets/fb458393-148b-49db-8b08-d57bb1c44ea5" />
+
+
+COMMENTO
 
 
 # NDMI (Normalized Difference Vegetation Index)
@@ -171,12 +190,28 @@ MANCA
 MANCA
 
 ```
-IMMAGINE E COMMENTO
+
+<p align="center">
+<img width="800" height="400" alt="NDMI" src="https://github.com/user-attachments/assets/a44442d3-57d6-4996-89cd-21784260ae89" />
+
+COMMENTO
 
 Qua poi dovrò capire se mettere anche  ridgeline e scatterplot. Sicuro faccio la differenza tra il 2018 e il 2021
 
+<p align="center">
+<img width="400" height="300" alt="ridgeline_NDMI" src="https://github.com/user-attachments/assets/3529ae00-8bd2-4123-b0d3-9e94d605b6b1" />
+
+<p align="center">
+<img width="400" height="300" alt="ΔNDMI 2018-2021" src="https://github.com/user-attachments/assets/2012e60f-990f-4938-a846-92cbdc550353" />
+
+<p align="center">
+<img width="400" height="300" alt="pairs_NDMI" src="https://github.com/user-attachments/assets/2be40679-c797-4901-af8e-529a27a32c0a" />
+
+<p align="center">
+<img width="400" height="300" alt="Scatterplot_NDMI" src="https://github.com/user-attachments/assets/e22aa2ca-c320-41ea-8940-d7f6b1c11659" />
 
 
+  
 # CLASSIFICAZIONE
 
 È stata applicata una classificazione per categorizzare i valori di NDVI in classi e analizzarne l'evoluzione nel tempo. La classificazione non è automatica, e sono state fornite le seguenti classi di riferimento.
@@ -189,6 +224,9 @@ TABELLA TABELLA TABELLA
 MANCA
 
 ```
+
+<p align="center">
+<img width="800" height="400" alt="plot_classi" src="https://github.com/user-attachments/assets/7ef5331c-cd41-4eb8-810c-8aab72161b0d" />
 
 
 ## Analisi quantitativa delle classi
@@ -212,7 +250,13 @@ Infine, sono stati creati dei barplot per visualizzare le variazioni delle perce
 MANCA
 
 ```
-IMMAGINE E COMMENTO
+
+<p align="center">
+<img width="1000" height="400" alt="barplot" src="https://github.com/user-attachments/assets/551f58b7-eaaf-42b7-9674-922d044a0d78" />
+
+
+
+COMMENTO
 
 
 # CONCLUSIONE
