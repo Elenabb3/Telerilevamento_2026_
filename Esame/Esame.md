@@ -348,7 +348,7 @@ plot(d_ndmi18_21, col = inferno(100), main = "ΔNDMI 2018-2021")
 È stata applicata una classificazione per categorizzare i valori di NDVI in classi e analizzarne l'evoluzione nel tempo.  
 Sono state fornite le seguenti classi di riferimento.
 
-|Classe|Valori di NDMI|                 
+  |Classe|Valori di NDMI|                 
   |--------|--------|
   |Vegetazione assente o morta|< 0,2|
   |Vegetazione scarsa e/o stressata|0,2 - 0,4|
@@ -397,7 +397,8 @@ legend(                    # Aggiungta della legenda
 <p align="center">
 <img width="800" height="400" alt="plot_classi" src="https://github.com/user-attachments/assets/7ef5331c-cd41-4eb8-810c-8aab72161b0d" />
 
-COMMENTO 
+> Le mappe mostrano una classificazione coerente con quanto osservato finora grazie all'NDVI. L'area boschiva a sud della mappa, nel 2018, si distingue effettivamente dal resto come vegetazione abbondante e in migliore stato di salute. Il 2018 parte comunque già da una situazione di copertura non particolarmente abbondante nella maggior parte dell'area. Questo può essere dovuto sia a fattori intrinseci di distribuzione della vegetazione sull'isola, sia a impatto antropico ed effetti di altre tempeste tropicali avvenute negli anni precedenti.
+Nel 2019 l'uragano ha causato una totale perdita della vegetazione in salute, con una persistenza di copertura scarsa solo nelle aree precedentemente più boscate. Nel 2021 buona parte della vegetazione è ricresciuta, pur non raggiungendo i valori pre-impatto, per ovvi motivi legati ai tempi di ricrescita degli alberi.
 
 ## Analisi quantitativa delle classi
 
@@ -476,15 +477,22 @@ p18 + p19 + p21
 <p align="center">
 <img width="1000" height="400" alt="barplot" src="https://github.com/user-attachments/assets/551f58b7-eaaf-42b7-9674-922d044a0d78" />
 
-
-
-COMMENTO
-
+> Il barplot permette di visualizzare più chiaramente le variazioni di copertura nei 3 anni. Nel 2018 prevalgono valori medi di copertura, ma esiste comunque anche una significativa porzione di vegetazione fitta. La bassa percentuale di vegetazione assente è sostanzialmente attribuibile alla presenza di corpi idrici e strade.
+Nel 2019 più dei 3/4 della superficie è costituita da vegetazione morta e poi eventualmente rimossa, e la percentuale di aree con NDVI > 0,4 (vegetazione abbondante) è scesa a 0.
+Nel 2021 quasi tutta la vegetazione mostra segni di ripresa, e lo spostamento della maggior parte dei valori nella classe 2 suggerisce una successione di stadi vegetazionali in atto.
 
 # CONCLUSIONE
 
+Le analisi hanno permesso di ottenere informazioni sullo stato e sulla distribuzione della vegetazione dell'isola nelle condizioni di pre-impatto. L'impatto dell'uragano Dorian risulta molto significativo, avendo portato a una temporanea quasi totale scomparsa dei boschi dall'area. Due anni dopo l'evento sono già visibili segni di ripresa, con piccole porzioni di territorio che sono tornati a valori di NDVI riconducibili a vegetazione abbondante. I plot di NDVI e soprattutto i ridgeline plot mostrano però come nel 2021 i valori siano ancora ben lontani dalla situazione iniziale.  
+L'NDMI, che indaga la presenza di acqua e lo stress idrico della vegetazione, mostra un andamento molto simile a quello dell'NDVI. Inoltre, visti i valori relativamente bassi già nel 2018, mostra una situazione non particolarmente umida e naturalmente propensa allo stress idrico.  
+Nel complesso le analisi spettrali di immagini satellitari si confermano un ottimo strumento per studiare in maniera efficiente i cambiamenti della vegetazione e l'impatto degli eventi meteo catastrofici su di essa.
+
 # BIBLIOGRAFIA
 
+- Copernicus programme: https://www.copernicus.eu/en 
+- Copernicus browser: https://browser.dataspace.copernicus.eu/ 
+- McKenzie et al., (2023). Eyes from the sky: Application of satellite-based indices to assess vegetation casualty on Grand Bahama Island one year post-Hurricane Dorian. Remote Sensing Applications: Society and Environment, 32, 101044.: https://doi.org/10.1016/j.rsase.2023.101044
+- eBird - picchio muratore delle Bahamas: https://ebird.org/species/bnhnut2?continue
 
 
 
