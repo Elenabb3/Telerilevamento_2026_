@@ -10,6 +10,12 @@
 Tra il 1 e 3 settembre 2019, l'isola di Grand Bahama è stata colpita dall'uragano Dorian. Si è trattato del più forte uragano che ha colpito le Bahamas in tempi moderni, e uno dei più potenti mai registrati nell'Oceano Atlantico, raggiungendo categoria 5 e venti oltre i 350 km/h. Oltre ai venti, una forte mareggiata con onde fino a 6 m di altezza ha inondato l'isola. La tempesta ha colpito soprattutto la parte centro-orientale, e oltre numerose vittime e danni devastanti ai centri abitati, ha causato importanti danni alle foreste.  
 L'isola di Grand Bahama si trova nei Caraibi e a causa della sua posizione geografica è regolarmente interessata da tempeste tropicali. La frequenza delle tempeste ha picco tra settembre e ottobre, ovvero gli ultimi mesi del periodo delle piogge. La vegetazione è costituita principalmente da foreste di Pino delle Bahamas (_Pinus caribae_ var. _bahamensis_), oltre a mangrovieti nelle aree più vicine alla costa. Sembra che l'uragano Dorian abbia causato l'estinzione del picchio muratore delle Bahamas (_Sitta insularis_), specie endemica dell'isola e già a rischio critico prima del 2019, e che non è stata più osservata negli anni successivi.
 
+
+<p align="center">
+<img width="300" height="300" alt="Dorian_2019-09-01_1641Z" src="https://github.com/user-attachments/assets/8ef4aa95-c089-446a-9022-1f99658abc3a" />
+<img width="300" height="250" alt="uragano-Dorian-Bahamas-57" src="https://github.com/user-attachments/assets/2f9d0ec7-efb9-4d01-8505-a9fda50d7b5b" />
+
+
 # Obiettivo del progetto
 
 Questo progetto vuole analizzare l'impatto dell'uragano Dorian sulla vegetazione dell'isola in 3 diversi momenti: 
@@ -21,7 +27,9 @@ Questo progetto vuole analizzare l'impatto dell'uragano Dorian sulla vegetazione
 
 È stata selezionata una zona della parte centrale dell'isola, a ovest dell'aeroporto ausiliare di Grand Bahama.  
 
-IMMAGINE IMMAGINE IMMAGINE
+<p align="center">
+<img width="550" height="400" alt="bahamas MAPPA" src="https://github.com/user-attachments/assets/04d4da7c-a62c-48df-8cad-488fdfd7d1d6" />
+
 
 
 Sono state svolte le seguenti analisi:
