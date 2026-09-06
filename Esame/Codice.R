@@ -12,7 +12,7 @@ library(patchwork)  # Visualizzazione e affiancamento di grafici
 # IMPORTAZIONE E PREPARAZIONE IMMAGINI
 #===================================
 
-#Definizione della working directory
+# Definizione della working directory
 setwd("C:/Users/elena/Desktop/Telesame")
 
 # Importazione delle delle bande di Sentinel-2
@@ -52,10 +52,9 @@ oct19 <- crop(or2019, aoi)
 oct21 <- crop(or2021, aoi)
 
 # Ritaglio della banda 11
-oct18b11 <- crop(or2018_b11 , aoi)
-oct19b11 <- crop(or2019_b11 , aoi)
-oct21b11 <- crop(or2021_b11 , aoi)
-
+oct18b11 <- crop(or2018_b11, aoi)
+oct19b11 <- crop(or2019_b11, aoi)
+oct21b11 <- crop(or2021_b11, aoi)
 
 #====================
 # VISUALIZZAZIONE DATI
@@ -64,7 +63,7 @@ oct21b11 <- crop(or2021_b11 , aoi)
 # Visualizzazione a colori naturali con plotRGB() di terra 
 # assegno r = rosso(3), g = verde(2), b = blu(1)
 
-par(mfrow = c(1,3))     #divisione del pannello in 3 colonne
+par(mfrow = c(1,3))     # divisione del pannello in 3 colonne
 plotRGB(oct18, 3, 2, 1, stretch = "lin", main = "RGB 2018") 
 plotRGB(oct19, 3, 2, 1, stretch = "lin", main = "RGB 2019")
 plotRGB(oct21, 3, 2, 1, stretch = "lin", main = "RGB 2021")
@@ -106,11 +105,11 @@ ndvi21 <- im.ndvi(oct21, 4, 3)
 ndvi <- c(ndvi18, ndvi19, ndvi21) # concatenamento in un vettore
 
 # Visualizzazione ndvi con palette viridis
-par(mfrow=c(1, 3))
+par(mfrow=c(1,3))
 plot(ndvi18, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2018")
 plot(ndvi19, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2019")
 plot(ndvi21, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2021")
-# Definisco il range di valori tra i valori minimo e massimo assoluto, in modo da avere stessa scala di valori tra le 3 immagini
+# Definisco il range di valori tra i valori minimo e massimo complessivi, così da poter confrontare direttamente i colori delle immagini
 
 # Ridgeline plot dell'ndvi con im.ridgeline() di imageRy
 names(ndvi) <- c("NDVI 2018", "NDVI 2019", "NDVI 2021")              # Assegnazione nomi elementi  
@@ -121,13 +120,12 @@ r <- im.ridgeline(ndvi, scale = 1, palette = "viridis") +            # Aggiunta 
 
 plot(r)
 
-#Differenze di ndvi tra 2018-2019, 2019-2021, 2018-2021
-
+# Differenze di ndvi tra 2018-2019, 2019-2021, 2018-2021
 d_ndvi18_19 <- ndvi[[2]] - ndvi[[1]]
 d_ndvi19_21 <- ndvi[[3]] - ndvi[[2]]
 d_ndvi18_21 <- ndvi[[3]] - ndvi[[1]]
 
-#Visualizzazione plot
+# Visualizzazione plot
 par(mfrow = c(1,3))
 plot(d_ndvi18_19, col = inferno(100), main = "ΔNDVI 2018-2019")
 plot(d_ndvi19_21, col = inferno(100), main = "ΔNDVI 2019-2021")
@@ -185,12 +183,12 @@ dev.off()
 names(ndmi) <- c("NDMI 2018", "NDMI 2019", "NDMI 2021")
 r1 <- im.ridgeline(ndmi, scale = 1, palette = "mako") +
   xlim(-0.3, 0.4) +                                                  # limitazione dei valori di x per una visualizzazione migliore
-  theme_minimal()+                                                   # tema con sfondo bianco
+  theme_minimal() +                                                   # tema con sfondo bianco
   labs(title = "Ridgeline plot dei valori di NDMI" , fill = "NDMI")  # titolo grafico e titolo legenda
 
 plot(r1)
 
-#Differenza di ndmi
+# Differenza di ndmi
 d_ndmi18_19 <- ndmi[[2]] - ndmi[[1]]
 d_ndmi18_21 <- ndmi[[3]] - ndmi[[2]]
 d_ndmi18_21 <- ndmi[[3]] - ndmi[[1]]
@@ -201,7 +199,7 @@ plot(d_ndmi19_21, col = inferno(100), main = "ΔNDMI 2019-2021")
 plot(d_ndmi18_21, col = inferno(100), main = "ΔNDMI 2018-2021")
 
 
-#Esportazione in png -----------------------------------------------------------------------------------
+# Esportazione in png -----------------------------------------------------------------------------------
 
 png("NDMI.png", width = 800, height = 400, res = 100)
 par(mfrow=c(1,3))
@@ -227,31 +225,31 @@ dev.off()
 #CLASSIFICAZIONE IN BASE ALL'NDVI
 #=================================
 
-#Classificazione supervisionata, con le seguenti classi
+# Classificazione supervisionata, con le seguenti classi
 # < 0.2 -> suolo/no veg. 0.2-0.4 -> veg. scarsa/stressata. >0.4 veg in salute
 
-#Matrice con le classi
+# Matrice con le classi
 cat <- matrix(c(
   -Inf, 0.2,  1,
   0.2, 0.4,  2,
   0.4, Inf,  3
 ), ncol = 3, byrow = TRUE)
 
-#Classificazione in base alla matrice
+# Classificazione in base alla matrice
 classi <- classify(ndvi, rcl = cat)
 
-#Assegnazione dei nomi delle classi
-nomi <-c("Vegetazione assente o morta", "Veg scarsa e/o stressata", "Veg abbondante e/o sana")
+# Assegnazione dei nomi delle classi
+nomi <- c("Vegetazione assente o morta", "Veg scarsa e/o stressata", "Veg abbondante e/o sana")
 
-#Creazione di una palette + assegnazione dei colori i nomi delle classi, nell'ordine che ho definito con l'oggetto nomi
-#funzione setNames() da stats (core package di R)
+# Creazione di una palette + assegnazione dei colori ai nomi delle classi, nell'ordine che ho definito con l'oggetto nomi
+# funzione setNames() da stats (core package di R)
 palette <- setNames(
   viridis(3, option = "viridis"),
   nomi
 )
 
-#Mappe della classificazione
-par(mfrow=c(1,3))
+# Mappe della classificazione
+par(mfrow = c(1,3))
 plot(classi[[1]], col = palette, main = "2018")
 plot(classi[[2]], col = palette, main = "2019")
 plot(classi[[3]], col = palette, main = "2021")
@@ -263,9 +261,9 @@ legend(
   xpd = TRUE
 )
 
-#Quantificazione della copertura percentuale delle classi
-freq_18 <- freq(classi[[1]])  #crea tabella con i pixel di ogni classe nella colonna count
-perc_18 <- freq_18$count * 100 / ncell(classi)   #divide valori di frequenza ($count) per il numero di pixel (ncell)
+# Quantificazione della copertura percentuale delle classi
+freq_18 <- freq(classi[[1]])                     # crea tabella con i pixel di ogni classe nella colonna count
+perc_18 <- freq_18$count * 100 / ncell(classi)   # divide valori di frequenza ($count) per il numero di pixel (ncell)
 
 freq_19 <- freq(classi[[2]])
 perc_19 <- freq_19$count * 100 / ncell(classi)
@@ -273,28 +271,26 @@ perc_19 <- freq_19$count * 100 / ncell(classi)
 freq_21 <- freq(classi[[3]])
 perc_21 <- freq_21$count * 100 / ncell(classi)
 
-
-#Creazione tabella con i risultati
-#Arrotondamento a una cifra decimale con round()
+# Creazione tabella con i risultati
+# Arrotondamento a una cifra decimale con round()
 tab <- data.frame(
-  class= nomi,
-  perc18=round(perc_18, 1),
-  perc19=round(perc_19, 1),
-  perc21=round(perc_21, 1)
+  class = nomi,
+  perc18 = round(perc_18, 1),
+  perc19 = round(perc_19, 1),
+  perc21 = round(perc_21, 1)
 )
 
 tab$class <- factor(tab$class, levels = nomi) #ordina le classi secondo il vettore nomi, altrimenti vengono automaticamente messe in ordine alfabetico
+# Assicura che le barre dei barplot escano nell'ordine che definisco
 
-##non è obbligatorio, però lo faccio perché voglio che nel barplot le colonne siano nell'ordine morta/scarsa/sana. Rendo anche le cateogorie un dato factor, ovvero una categoria
-
-tab  #visualizzazione della tabella
+tab  # visualizzazione della tabella
 
 #====================================
-#BARPLOT CON PERCENTUALI DI COPERTURA
+# BARPLOT CON PERCENTUALI DI COPERTURA
 #====================================
 
-#ggplot() permette di creare grafici e aggiungere elementi con "+"
-#I valori sono presi dalla tabella tab
+# ggplot() permette di creare grafici e aggiungere elementi con "+"
+# I valori sono presi dalla tabella tab
 p18 <- ggplot(tab, aes(x = class, y = perc18, fill = class)) +      # aes() determina come inserire gli elementi di tab nel grafico
   geom_bar(stat = "identity")  +                                    # crea le barre, stat = "indentity" dice di inserire i valori della tabella
   ylim(0,100) +                                                     # range dell'asse y
@@ -326,7 +322,7 @@ p21 <- ggplot(tab, aes(x = class, y = perc21, fill = class)) +
 # Visualizzazione dei 3 grafici affiancati grazie a pacchetto patchwork
 p18 + p19 + p21
 
-#Esportazione in png -----------------------------------------------------------------
+# Esportazione in png -----------------------------------------------------------------
 
 png("plot_classi.png", width = 800, height = 400, res = 100)
 par(mfrow=c(1,3))
@@ -341,21 +337,11 @@ legend(
   xpd = TRUE
 )
 
-dev.off()    #molto brutto che nel png posiziona la legenda così lontana
-
+dev.off() 
 
 png("barplot.png", width = 1000, height = 600, res = 100)
 p18 + p19 + p21
 dev.off()
 
 #------------------------------------------------------------------------------------------------
-
-#https://ebird.org/species/bnhnut2?continue
-#https://shelterboxcanada.org/where-we-work/bahamas/hurricane-dorian/
-#https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/ndmi/       ndmi
-#https://www.sciencedirect.com/science/article/pii/S235293852300126X     paper su analisi post dorian
-
-#https://support.zendesk.com/hc/it/articles/4408846544922-Formattazione-del-testo-con-Markdown da togliere, guida markdown
-
-#FINE=================================================================
 
