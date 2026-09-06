@@ -3,9 +3,22 @@
 > #### Corso di Telerilevamento Geo-Ecologico in R, a.a. 2025-26
 > #### Elena Betti
 
-## Indice?
+## Indice
 
-# Introduzione
+1. Introduzione
+2. Obiettivo del progetto
+3. Dati
+4. Importazione e preparazione immagini
+5. Visualizzazione
+6. Esportazione delle immagini
+7. NDVI (Normalized Difference Vegetation Index)
+8. NDMI (Normalized Difference Moisture Index)
+9. Classificazione
+10. Conclusioni
+11. Riferimenti
+
+
+# 1. Introduzione
 
 Tra il 1 e 3 settembre 2019, l'isola di Grand Bahama è stata colpita dall'uragano Dorian. Si è trattato del più forte uragano che ha colpito le Bahamas in tempi moderni, e uno dei più potenti mai registrati nell'Oceano Atlantico, raggiungendo categoria 5 e venti oltre i 350 km/h. Oltre ai venti, una forte mareggiata con onde fino a 6 m di altezza ha inondato l'isola. La tempesta ha colpito soprattutto la parte centro-orientale, e oltre numerose vittime e danni devastanti ai centri abitati, ha causato importanti danni alle foreste.  
 L'isola di Grand Bahama si trova nei Caraibi e a causa della sua posizione geografica è regolarmente interessata da tempeste tropicali. La frequenza delle tempeste ha picco tra settembre e ottobre, ovvero gli ultimi mesi del periodo delle piogge. La vegetazione è costituita principalmente da foreste di Pino delle Bahamas (_Pinus caribae_ var. _bahamensis_), oltre a mangrovieti nelle aree più vicine alla costa. Sembra che l'uragano Dorian abbia causato l'estinzione del picchio muratore delle Bahamas (_Sitta insularis_), specie endemica dell'isola e già a rischio critico prima del 2019, e che non è stata più osservata negli anni successivi.
@@ -16,7 +29,7 @@ L'isola di Grand Bahama si trova nei Caraibi e a causa della sua posizione geogr
 <img width="300" height="250" alt="uragano-Dorian-Bahamas-57" src="https://github.com/user-attachments/assets/2f9d0ec7-efb9-4d01-8505-a9fda50d7b5b" />
 
 
-# Obiettivo del progetto
+# 2. Obiettivo del progetto
 
 Questo progetto vuole analizzare l'impatto dell'uragano Dorian sulla vegetazione dell'isola in 3 diversi momenti: 
 
@@ -25,10 +38,6 @@ Questo progetto vuole analizzare l'impatto dell'uragano Dorian sulla vegetazione
 * Ottobre 2021, due anni dopo
 
 
-È stata selezionata una zona della parte centrale dell'isola, a ovest dell'aeroporto ausiliare di Grand Bahama.  
-
-<p align="center">
-<img width="550" height="400" alt="bahamas MAPPA" src="https://github.com/user-attachments/assets/04d4da7c-a62c-48df-8cad-488fdfd7d1d6" />
 
 
 
@@ -39,7 +48,7 @@ Sono state svolte le seguenti analisi:
 * Classificazione dei valori di NDVI e mappatura del territorio
 * Quantificazione della copertura percentuale delle classi tra i vari anni
 
-# Dati
+# 3. Dati
 
 Sono state utilizzate 3 immagini satellitari di Sentinel_2A, scaricate dal portale di [Copernicus](https://browser.dataspace.copernicus.eu/).
 
@@ -53,6 +62,15 @@ Sono state utilizzate 3 immagini satellitari di Sentinel_2A, scaricate dal porta
   |B8|10 m|NIR(vicino infrarosso)|NDVI, NDMI, classificazione|
   |B11|20 m| SWIR 1|NDMI|
 
+È stata selezionata una zona della parte centrale dell'isola, a ovest dell'aeroporto ausiliare di Grand Bahama.  
+
+<p align="center">
+<img width="550" height="400" alt="bahamas MAPPA" src="https://github.com/user-attachments/assets/04d4da7c-a62c-48df-8cad-488fdfd7d1d6" />
+  
+
+
+# 4. Importazione e preparazione immagini
+
 ## Pacchetti
 
 ```r
@@ -62,8 +80,6 @@ library(viridis)    # Palette ad alto contrasto e adatte per il daltonismo
 library(ggplot2)    # Creazione dei grafici a barre
 library(patchwork)  # Visualizzazione e affiancamento di grafici
 ```
-
-# Importazione e preparazione immagini
 
 ## Definizione della working directory
 
@@ -131,7 +147,7 @@ oct19b11 <- crop(or2019_b11 , aoi)
 oct21b11 <- crop(or2021_b11 , aoi)
 ```
 
-# Visualizzazione
+# 5. Visualizzazione
 
 ## Colori reali (RGB)
 
@@ -147,8 +163,6 @@ plotRGB(oct21, 3, 2, 1, stretch = "lin", main = "RGB 2021")
 ```
 <p align="center">
 <img width="800" height="400" alt="RGB_bahamas" src="https://github.com/user-attachments/assets/a176e3db-2bd1-46f2-b322-965b9db2ad8f" />
-
-COMMENTO
 
 
 ## Falsi colori (NIR - rosso - verde)
@@ -166,10 +180,10 @@ plotRGB(oct21, 4, 3, 2, stretch = "lin", main = "NIR 2021")
 <p align="center">
 <img width="800" height="400" alt="NIR_bahamas" src="https://github.com/user-attachments/assets/08ca8c4d-a3d0-4f05-86c2-462972dd040c" />
   
-COMMENTO
+> Le immagini mostrano su scala di rosso la riflettanza nella banda NIR, che è correlata positivamente alla presenza di vegetazione. è evidente come l'estensione e l'intensità del rosso subiscano una diminuzione negli anni successivi al 2018.
 
 
-## Esportazione delle immagini
+## 6. Esportazione delle immagini
 
 Si riporta il codice con cui è stata esportata la precedente immagine in formato png.  
 Lo stesso procedimento è stato ripetuto per tutte le altre immagini del progetto.
@@ -184,7 +198,7 @@ dev.off()
 ```
 
 
-# NDVI (Normalized Difference Vegetation Index)
+# 7. NDVI (Normalized Difference Vegetation Index)
 
 $$
 NDVI = \frac{NIR - RED}{NIR + RED}
@@ -213,7 +227,7 @@ plot(ndvi21, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main
 <p align="center">
 <img width="800" height="400" alt="NDVI" src="https://github.com/user-attachments/assets/e840e3f2-a1b3-404c-a30f-28d89c207441" />
 
-> L'area presenta valori medio-alti di NDVI nel 2018, in particolare nella parte meridionale, indicando quindi maggiore copertura. È inoltre evidente una diminuzione dell'NDVI nel 2019, dopo l'uragano, e una maggiore uniformità nei colori. Ciò indica che, oltre a una perdita di vegetazione, c'è stata anche una perdita delle differenze di vegetazione prima presenti. Nel 2021 i valori tornano ad aumentare, indicando una ricrescita, ma la situazione appare ancora significativamente degradata rispetto al 2018.
+> La prima immagine mostra valori medio-alti di NDVI nel 2018, e si distingue chiaramente un'area nella parte meridionale con presenza di maggiore vegetazione, riconducibile alle pinete che caratterizzano l'isola. È inoltre evidente una diminuzione dell'NDVI nel 2019, dopo l'uragano, e una maggiore uniformità nei colori. Ciò indica che, oltre a una perdita di vegetazione, c'è stata un'omogeneizzazione del paesaggio. Nel 2021 i valori tornano ad aumentare, indicando una ricrescita, ma la situazione appare ancora significativamente degradata rispetto al 2018.
 
 ## Ridgeline plot 
 
@@ -233,14 +247,14 @@ plot(r)
 ```
 
 <p align="center">
-<img width="800" height="600" alt="ridgeline_ndvi" src="https://github.com/user-attachments/assets/ced69bb8-9f3f-40f4-9b92-b1d64142e491" />
+<img width="400" height="300" alt="ridgeline_ndvi" src="https://github.com/user-attachments/assets/ced69bb8-9f3f-40f4-9b92-b1d64142e491" />
 
-> Il 2018 presenta la curva più spostata verso destra, e le frequenze sono distribuite in 2 picchi principali, che possono essere ricondotti alla differenza tra l'area boschiva a sud e il resto dell'immagine. Nel 2019 i valori di spostano verso sinistra e la maggior parte si concentra in un range di valori più ristretto, indicativamente tra 0.1 e 0.2. Questi valori molto bassi sono indice di assenza di vegetazione o di vegetazione morta. Nel 2021, come atteso, la distribuzione torna a spostarsi verso valori maggiori, e sembra che si stia ricostituendo una curva a due picchi come nel 2018. La vegetazione sembra quindi essere in via di ripresa.
+> Il 2018 presenta la curva più spostata verso destra, e le frequenze sono distribuite in 2 picchi principali, che possono essere ricondotti alla differenza tra l'area boschiva a sud e il resto dell'immagine. Nel 2019 la curva si sposta verso sinistra e si concentra in un range di valori più ristretto, indicativamente tra 0.1 e 0.2. Questi valori molto bassi sono indice di assenza di vegetazione o di vegetazione morta. Nel 2021, come atteso, la distribuzione torna a spostarsi verso valori maggiori, e sembra che si stiano nuovamente differenziando due picchi come nel 2018. La vegetazione appare quindi in via di ripresa.
  
 
 ## Variazione di NDVI
 
-Il calcolo della differenza di NDVI tra gli anni permette di visualizzare tale variazione sulla mappa. È così possibile individuare le aree interessate da maggiori cambiamenti. Valori sopra lo 0 indicano una variazione positiva, e quindi un aumento di NDVI nel secondo anno; valori negativi indicano una diminuzione.
+Il calcolo della differenza di NDVI tra gli anni permette di visualizzare tale variazione sulla mappa. È così possibile individuare le aree interessate da maggiori cambiamenti. Valori sopra lo 0 indicano una variazione positiva, e quindi un aumento di NDVI; valori negativi indicano una diminuzione.
 
 ```r
 d_ndvi18_19 <- ndvi[[2]] - ndvi[[1]]
@@ -257,24 +271,23 @@ plot(d_ndvi18_21, col = inferno(100), main = "ΔNDVI 2018-2021")
 <p align="center">
 <img width="800" height="400" alt="ΔNDVI" src="https://github.com/user-attachments/assets/fb458393-148b-49db-8b08-d57bb1c44ea5" />
 
-> Praticamente sembra che nel secondo plot ci sia diminuzione perché i colori sono più scuri. In realtà no perché guardando la legenda i valori sono in un range più alto e la maggior parte dell'area ha quindi una variazione positiva. Questo indica una ripresa, ma il fatto che il range di variazione sia minore indica anche che la ripresa rispetto al 2019 è stata piuttosto scarsa. Questa è una cosa sensata direi. e infatti confrontando 2018 e 2021 c'è sempre una diminuzione, che anche se minore è comunque più comparabile alla variazione 2018-19 che a quella 2019-21. !!! Complicata questa cosa da spiegare, ho paure di fare discorsi circolari
+> Il primo plot, che confronta 2018 e 2019, presenta per lo più valori negativi, confermando una generale diminuzione di NDVI. Si nota inoltre che il cambiamento maggiore è avvenuto nella zona di bosco a sud, dove l'NDVI era originariamente più alto.
+Nella seconda immagine la maggior parte dei valori si trova sopra allo 0, e si possono distinguere soprattutto a sud le aree dove il recupero tra 2019 e 2021 è stato maggiore.
+Nel confronto tra 2018 e 2021 si osserva una generale diminuzione, anche se minore rispetto a quella tra 2018 e 2019. Ciò accade perché nonostante la ripresa, i valori di NDVI del 2021 restano più bassi della situazione di partenza.
 
-# NDMI (Normalized Difference Vegetation Index)
+# 8. NDMI (Normalized Difference Vegetation Index)
 
 $$
 NDMI = \frac{NIR - SWIR 1}{NIR + SWIR 1}
 $$
 
-L'NDMI è un indice utilizzato per stimare il contenuto di acqua nella vegetazione, e quindi anche le condizioni di stress idrico.  
-Utilizza la luce infrarossa a onde corte (SWIR), una categoria di infrarosso subito successiva al NIR. Le onde SWIR sono assorbite dall'acqua, e permette quindi di distinguere aree con suolo scoperto, vegetazione secca o in stress idrico (minore rifletttanza) da aree con vegetazione più florida (maggiore riflettanza).  
-L'NDMI varia tra -1 e 1, e valori attorno allo 0,3 indicano la soglia di stress idrico delle piante. #però quando faccio l'NDMI invece sono i valori bassi a indicare stress, quindi occhio a spiegarlo bene.
-
-Qua ci potrei inserire i plot della banda 11, che fa vedere la riflettanza rispetto all'acqua. o magari no sticasi
+L'NDMI è un indice utilizzato per stimare il contenuto di acqua nella vegetazione, e quindi anche le condizioni di stress idrico. Utilizza la luce infrarossa a onde corte (SWIR). Le onde SWIR sono assorbite dall'acqua, e permettono quindi di distinguere aree con suolo scoperto, vegetazione secca o in stress idrico (maggiore riflettanza) da aree con vegetazione più florida e umida (minore riflettanza).  
+La combinazione con la banda NIR risulta in un indice che varia tra -1 e 1 e permette di distinguere le foglie in base al loro contenuto di acqua. I valori sotto a 0,4 indicano condizioni di stress idrico delle piante, mentre a valori sotto lo 0,2 si associano condizioni di suolo nudo. Considerando i danni causati dall'uragano e l'inondazione di vaste aree dell'isola dell'acqua salata, può essere interessante indagare anche la variazione di questo indice.
 
 
 ## Ricampionamento banda 8 10m -> 20m
 Sentinel-2 ottiene la banda 8 NIR a una risoluzione di 10 m, mentre quella dello SWIR 1 a risoluzione di 20 m. Per questo la banda 8 è stata ricampionata sulla griglia della banda 11, così da portarla a una risoluzione di 20 m e rendere le due immagini utilizzabili per l'NDMI. Questo indice quindi, a differenza dell'NDVI, è quindi stato calcolato con una risoluzione spaziale di 20 m.  
-Viene usata la funzione `resample()` del pacchetto `terra`
+Viene usata la funzione `resample()` del pacchetto `terra`.
 
 ```r
 # method = "average" fa la media dei pixel che vengono accorpati nel nuovo pixel
@@ -304,7 +317,7 @@ dev.off()
 <p align="center">
 <img width="800" height="400" alt="NDMI" src="https://github.com/user-attachments/assets/a44442d3-57d6-4996-89cd-21784260ae89" />
 
-> I valori di NDMI sono generalmente abbastanza bassi, già nel 2018. Comunque è ben visibile la differenza tra la zona di pineta più abbondante a sud e il resto del territorio. L'NDMI diminuisce nel 2019 e torna ad aumentare nel 2021 in modo apparentemente analogo a quello dell'NDMI. Le aree con NDMI basso corrispondono infatti, approssimativamente, a quelle attribuibili a vegetazione morta o suolo scoperto grazie all'NDVI. Boh non so che altro diree.
+> I valori di NDMI sono generalmente abbastanza bassi già nel 2018, in quanto hanno massimi attorno allo 0,4 ma raramente lo superano. Comunque è ben visibile la differenza tra la zona di pineta più abbondante a sud e il resto del territorio, che appare piuttosto arido. L'NDMI diminuisce nel 2019 e torna ad aumentare nel 2021 in modo apparentemente analogo a quello dell'NDVI (Figura n).
 
 ## Ridgeline plot NDMI
 
@@ -321,7 +334,7 @@ plot(r1)
 <p align="center">
 <img width="800" height="600" alt="ridgeline_NDMI" src="https://github.com/user-attachments/assets/9586d891-059d-4009-8435-9b0cb8d78486" />
 
-> La variazione della distribuzione delle frequenze dell'NDMI è simile a quanto visto per l'NDVI, anche se si muove su range di valori diversi, e anche meno ampi. pfffff
+> La forma delle curve di distribuzione dell'NDMI è simile a quanto visto per l'NDVI, anche se si posizionano, chiaramente, su valori differenti. Ciò conferma una variazione correlata dei due indici.
 
 ## Variazione di NDMI
 
@@ -340,10 +353,10 @@ plot(d_ndmi18_21, col = inferno(100), main = "ΔNDMI 2018-2021")
 <img width="800" height="400" alt="ΔNDMI" src="https://github.com/user-attachments/assets/10f0e0e8-a6e8-4553-9adb-913cde080523" />
 
 
-> Stessa roba uffa
+> Anche le differenze di NDMI, confrontando gli anni 2 a 2, sono comparabili a quelle di NDVI. Si può notare come, nonostante tra 2019 e 2021 ci sia un aumento, esso è abbastanza contenuto. 
 
   
-# CLASSIFICAZIONE
+# 9. Classificazione
 
 È stata applicata una classificazione per categorizzare i valori di NDVI in classi e analizzarne l'evoluzione nel tempo.  
 Sono state fornite le seguenti classi di riferimento.
@@ -397,8 +410,8 @@ legend(                    # Aggiungta della legenda
 <p align="center">
 <img width="800" height="400" alt="plot_classi" src="https://github.com/user-attachments/assets/7ef5331c-cd41-4eb8-810c-8aab72161b0d" />
 
-> Le mappe mostrano una classificazione coerente con quanto osservato finora grazie all'NDVI. L'area boschiva a sud della mappa, nel 2018, si distingue effettivamente dal resto come vegetazione abbondante e in migliore stato di salute. Il 2018 parte comunque già da una situazione di copertura non particolarmente abbondante nella maggior parte dell'area. Questo può essere dovuto sia a fattori intrinseci di distribuzione della vegetazione sull'isola, sia a impatto antropico ed effetti di altre tempeste tropicali avvenute negli anni precedenti.
-Nel 2019 l'uragano ha causato una totale perdita della vegetazione in salute, con una persistenza di copertura scarsa solo nelle aree precedentemente più boscate. Nel 2021 buona parte della vegetazione è ricresciuta, pur non raggiungendo i valori pre-impatto, per ovvi motivi legati ai tempi di ricrescita degli alberi.
+> Le mappe mostrano una classificazione coerente con quanto osservato finora grazie all'NDVI. L'area boschiva a sud della mappa, nel 2018, si distingue effettivamente dal resto come vegetazione abbondante e in migliore stato di salute. Il 2018 parte comunque da una situazione di copertura non particolarmente abbondante nella maggior parte dell'area. Questo può essere dovuto sia a fattori intrinseci di distribuzione della vegetazione sull'isola, sia a impatto antropico ed effetti di altre tempeste tropicali avvenute negli anni precedenti.
+Nel 2019 l'uragano ha causato una totale perdita della vegetazione in salute, con una persistenza di copertura scarsa solo nelle aree precedentemente più boscate. Nel 2021 buona parte della vegetazione si è ripresa, pur non raggiungendo i valori pre-impatto, ed è riconducibile a valori di copertura scarsa.
 
 ## Analisi quantitativa delle classi
 
@@ -479,18 +492,19 @@ p18 + p19 + p21
 
 > Il barplot permette di visualizzare più chiaramente le variazioni di copertura nei 3 anni. Nel 2018 prevalgono valori medi di copertura, ma esiste comunque anche una significativa porzione di vegetazione fitta. La bassa percentuale di vegetazione assente è sostanzialmente attribuibile alla presenza di corpi idrici e strade.
 Nel 2019 più dei 3/4 della superficie è costituita da vegetazione morta e poi eventualmente rimossa, e la percentuale di aree con NDVI > 0,4 (vegetazione abbondante) è scesa a 0.
-Nel 2021 quasi tutta la vegetazione mostra segni di ripresa, e lo spostamento della maggior parte dei valori nella classe 2 suggerisce una successione di stadi vegetazionali in atto.
+Nel 2021 quasi tutta la superficie appartiene alla classe 2, conseguentemente alla ricrescita della vegetazione.
 
-# CONCLUSIONE
+# 10. Conclusioni
 
-Le analisi hanno permesso di ottenere informazioni sullo stato e sulla distribuzione della vegetazione dell'isola nelle condizioni di pre-impatto. L'impatto dell'uragano Dorian risulta molto significativo, avendo portato a una temporanea quasi totale scomparsa dei boschi dall'area. Due anni dopo l'evento sono già visibili segni di ripresa, con piccole porzioni di territorio che sono tornati a valori di NDVI riconducibili a vegetazione abbondante. I plot di NDVI e soprattutto i ridgeline plot mostrano però come nel 2021 i valori siano ancora ben lontani dalla situazione iniziale.  
-L'NDMI, che indaga la presenza di acqua e lo stress idrico della vegetazione, mostra un andamento molto simile a quello dell'NDVI. Inoltre, visti i valori relativamente bassi già nel 2018, mostra una situazione non particolarmente umida e naturalmente propensa allo stress idrico.  
+Le analisi hanno permesso di ottenere informazioni sullo stato e sulla distribuzione della vegetazione dell'isola nelle condizioni di pre-impatto. L'impatto dell'uragano Dorian risulta molto significativo, avendo portato a una temporanea quasi totale scomparsa dei boschi dall'area. Due anni dopo l'evento sono già visibili segni di ripresa. I plot di NDVI e soprattutto i ridgeline plot mostrano però come nel 2021 i valori siano ancora ben lontani dalla situazione iniziale.  
+L'NDMI mostra un andamento della presenza d'acqua nelle piante molto simile a quello dell'NDVI. Inoltre, visti i valori relativamente bassi nel 2018, mostra una situazione sulla soglia dello stress idrico già in partenza. Considerando il clima e il tipo di vegetazione che caratterizza l'isola, è plausibile che questa sia la condizione naturale e che le piante tipiche siano adattate alla vicinanza dell'acqua salata e a situazioni di relativa aridità.
 Nel complesso le analisi spettrali di immagini satellitari si confermano un ottimo strumento per studiare in maniera efficiente i cambiamenti della vegetazione e l'impatto degli eventi meteo catastrofici su di essa.
 
-# BIBLIOGRAFIA
+# 11. Riferimenti
 
 - Copernicus programme: https://www.copernicus.eu/en 
-- Copernicus browser: https://browser.dataspace.copernicus.eu/ 
+- Copernicus browser: https://browser.dataspace.copernicus.eu/
+- Sentinel Hub NDMI: https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/ndmi/ 
 - McKenzie et al., (2023). Eyes from the sky: Application of satellite-based indices to assess vegetation casualty on Grand Bahama Island one year post-Hurricane Dorian. Remote Sensing Applications: Society and Environment, 32, 101044.: https://doi.org/10.1016/j.rsase.2023.101044
 - eBird - picchio muratore delle Bahamas: https://ebird.org/species/bnhnut2?continue
 
