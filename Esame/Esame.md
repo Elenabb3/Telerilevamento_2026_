@@ -37,10 +37,6 @@ Questo progetto vuole analizzare l'impatto dell'uragano Dorian sulla vegetazione
 * Ottobre 2019, circa un mese dopo;
 * Ottobre 2021, due anni dopo
 
-
-
-
-
 Sono state svolte le seguenti analisi:
 
 * NDVI (Normalized Difference Vegetation Index)
@@ -67,7 +63,6 @@ Sono state utilizzate 3 immagini satellitari di Sentinel_2A, scaricate dal porta
 <p align="center">
 <img width="550" height="400" alt="bahamas MAPPA" src="https://github.com/user-attachments/assets/04d4da7c-a62c-48df-8cad-488fdfd7d1d6" />
   
-
 
 # 4. Importazione e preparazione immagini
 
@@ -142,9 +137,9 @@ oct19 <- crop(or2019, aoi)
 oct21 <- crop(or2021, aoi)
 
 # Ritaglio della banda 11
-oct18b11 <- crop(or2018_b11 , aoi)
-oct19b11 <- crop(or2019_b11 , aoi)
-oct21b11 <- crop(or2021_b11 , aoi)
+oct18b11 <- crop(or2018_b11, aoi)
+oct19b11 <- crop(or2019_b11, aoi)
+oct21b11 <- crop(or2021_b11, aoi)
 ```
 
 # 5. Visualizzazione
@@ -217,11 +212,11 @@ ndvi21 <- im.ndvi(oct21, 4, 3)
 ndvi <- c(ndvi18, ndvi19, ndvi21) # concatenamento in un vettore
 
 # Visualizzazione ndvi con palette viridis
-par(mfrow=c(1, 3))
+par(mfrow=c(1,3))
 plot(ndvi18, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2018")
 plot(ndvi19, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2019")
 plot(ndvi21, col = viridis(100), range = range(values(ndvi), na.rm = TRUE), main = "NDVI 2021")
-# Definisco il range della legenda, in modo da avere stessa scala tra le 3 immagini e colori direttamente confrontabili tra loro
+# Definisco il range di valori tra i valori minimo e massimo complessivi, così da poter confrontare direttamente i colori delle immagini
 ```
 
 <p align="center">
@@ -240,7 +235,7 @@ names(ndvi) <- c("NDVI 2018", "NDVI 2019", "NDVI 2021")              # Assegnazi
  
 r <- im.ridgeline(ndvi, scale = 1, palette = "viridis") +            # Aggiunta di elementi dopo + con la sintassi di ggplot
   xlim(0, 0.75) +                                                    # Restringimento dei valori di x per una visualizzazione migliore
-  theme_minimal()+                                                   # Tema minimal con sfondo bianco
+  theme_minimal() +                                                  # Tema minimal con sfondo bianco
   labs(title = "Ridgeline plot dei valori di NDVI" , fill = "NDVI")  # Titolo grafico e titolo legenda
 
 plot(r)
@@ -306,10 +301,10 @@ ndmi21 <- (oct21b8_20m - oct21b11)/(oct21b8_20m + oct21b11)
 ndmi <- c(ndmi18, ndmi19, ndmi21)
 
 # Visualizzazione
-par(mfrow=c(1,3))
-plot(ndmi18, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2018")
-plot(ndmi19, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2019")
-plot(ndmi21, col = mako(100), range=range(values(ndmi), na.rm = TRUE), main = "NDMI 2021")
+par(mfrow = c(1,3))
+plot(ndmi18, col = mako(100), range = range(values(ndmi), na.rm = TRUE), main = "NDMI 2018")
+plot(ndmi19, col = mako(100), range = range(values(ndmi), na.rm = TRUE), main = "NDMI 2019")
+plot(ndmi21, col = mako(100), range = range(values(ndmi), na.rm = TRUE), main = "NDMI 2021")
 
 dev.off()
 ```
@@ -325,7 +320,7 @@ dev.off()
 names(ndmi) <- c("NDMI 2018", "NDMI 2019", "NDMI 2021")
 r1 <- im.ridgeline(ndmi, scale = 1, palette = "mako") +
   xlim(-0.3, 0.4) +                                                  # limitazione dei valori di x per una visualizzazione migliore
-  theme_minimal()+                                                   # tema con sfondo bianco
+  theme_minimal() +                                                  # tema con sfondo bianco
   labs(title = "Ridgeline plot dei valori di NDMI" , fill = "NDMI")  # titolo grafico e titolo legenda
 
 plot(r1)
@@ -381,11 +376,11 @@ Classificazione dei dati in base alla matrice
 ```r
 classi <- classify(ndvi, rcl = cat)
 
-#Assegnazione dei nomi delle classi
+# Assegnazione dei nomi delle classi
 nomi <-c("Vegetazione assente o morta", "Veg scarsa e/o stressata", "Veg abbondante e/o sana")
 
-#Creazione di una palette + assegnazione dei colori i nomi delle classi, nell'ordine che ho definito con l'oggetto nomi
-#funzione setNames() da stats (core package di R)
+# Creazione di una palette + assegnazione dei colori i nomi delle classi, nell'ordine che ho definito con l'oggetto nomi
+# funzione setNames() da stats (core package di R)
 palette <- setNames(
   viridis(3, option = "viridis"),
   nomi
@@ -394,7 +389,7 @@ palette <- setNames(
 Visualizzazione delle mappe classificate
 
 ```r
-par(mfrow=c(1,3))
+par(mfrow = c(1,3))
 plot(classi[[1]], col = palette, main = "2018")
 plot(classi[[2]], col = palette, main = "2019")
 plot(classi[[3]], col = palette, main = "2021")
@@ -418,7 +413,7 @@ Nel 2019 l'uragano ha causato una totale perdita della vegetazione in salute, co
 Sono state calcolate le percentuali di copertura delle classi per ogni anno preso in esame, e i valori sono poi stati inseriti in una tabella
 
 ```r
-freq_18 <- freq(classi[[1]])  #crea tabella con i pixel di ogni classe nella colonna count
+freq_18 <- freq(classi[[1]])                     #crea tabella con i pixel di ogni classe nella colonna count
 perc_18 <- freq_18$count * 100 / ncell(classi)   #divide valori di frequenza ($count) per il numero di pixel (ncell)
 
 freq_19 <- freq(classi[[2]])
@@ -427,18 +422,18 @@ perc_19 <- freq_19$count * 100 / ncell(classi)
 freq_21 <- freq(classi[[3]])
 perc_21 <- freq_21$count * 100 / ncell(classi)
 
-#Creazione tabella con i risultati
-#Arrotondamento a una cifra decimale con round()
+# Creazione tabella con i risultati
+# Arrotondamento a una cifra decimale con round()
 tab <- data.frame(
   class= nomi,
-  perc18=round(perc_18, 1),
-  perc19=round(perc_19, 1),
-  perc21=round(perc_21, 1)
+  perc18 = round(perc_18, 1),
+  perc19 = round(perc_19, 1),
+  perc21 = round(perc_21, 1)
 )
 
 tab$class <- factor(tab$class, levels = nomi) #ordina le classi secondo il vettore nomi, altrimenti vengono automaticamente messe in ordine alfabetic
-##non è obbligatorio, però lo faccio perché voglio che nel barplot le colonne siano nell'ordine morta/scarsa/sana. Rendo anche le cateogorie un dato factor, ovvero una categoria
-tab  #visualizzazione della tabella
+# Assicura che le barre dei barplot escano nell'ordine che definisco
+tab     # visualizzazione della tabella
 ```
 
 I risultati sono qui riportati.
@@ -453,8 +448,8 @@ I risultati sono qui riportati.
 Infine, sono stati creati dei barplot per visualizzare le variazioni delle percentuali
 
 ```r
-#ggplot() permette di creare grafici e aggiungere elementi con "+"
-#I valori sono presi dalla tabella tab
+# ggplot() permette di creare grafici e aggiungere elementi con "+"
+# I valori sono presi dalla tabella tab
 p18 <- ggplot(tab, aes(x = class, y = perc18, fill = class)) +      # aes() determina come inserire gli elementi di tab nel grafico
   geom_bar(stat = "identity")  +                                    # crea le barre, stat = "indentity" dice di inserire i valori della tabella
   ylim(0,100) +                                                     # range dell'asse y
